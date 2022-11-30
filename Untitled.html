@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>R을 이용한 생존분석 워크샵</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+<script src="Untitled_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Untitled_files/libs/quarto-html/quarto.js"></script>
+<script src="Untitled_files/libs/quarto-html/popper.min.js"></script>
+<script src="Untitled_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Untitled_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Untitled_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Untitled_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Untitled_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Untitled_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Untitled_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">R을 이용한 생존분석 워크샵</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<section id="초대의-글" class="level2">
+<h2 class="anchored" data-anchor-id="초대의-글">초대의 글</h2>
+<p>안녕하세요? 웹R을 운영하는 문건웅입니다. 오랜만에 <strong>R을 이용한 생존분석</strong>을 주제로 오프라인 워크샵을 하고자 합니다. 생존분석은 <strong>어떤 사건이 일어날 때까지의 시간</strong>을 관심있는 반응변수로 하는 통계적인 방법으로 생존분석에서 다루는 사건이란 사망, 질병의 발생, 재발, 회복 또는 어떤 사람에게 일어날 수 있는 관심있는 경험 등이 될 수도 있습니다. 질병, 치료, 사망 등을 다루는 의학연구에서는 생존분석을 많이 사용하지만 대부분의 의료인들에게는 생존분석이란 매우 어렵게 느껴집니다. 어쩌다 관심을 가지고 생존분석 책을 보아도 여러 수학기호로 되어 있는 식을 보며 내 능력으로는 이해할 수 없다고 생각하고 포기하기도 합니다. 이번 워크샵에서는 수학적인 기초가 되어 있지 않은 의료인들이 보다 쉽게 생존분석의 개념을 이해하고 자신의 데이터를 가지고 생존분석을 수행하고 의학논문 작성을 위한 표와 그래프 등을 쉽게 만들 수 있게 하기 위해서 “최소한의 수학지식” 부터 시작합니다. 지수와 로그, 최소한의 미분 등 어렴풋한 기억 속에 남아있는 수학지식 중 생존분석을 이해하는 데 필요한 수학지식을 점검해보고 생존분석의 개념, 콕스 비례위험모형과 모수적 회귀 모형 등을 다룹니다. 이번 워크샵은 통계마당과 함께 주최합니다.</p>
+</section>
+<section id="일정" class="level2">
+<h2 class="anchored" data-anchor-id="일정">일정</h2>
+<ul>
+<li><p>일시 : 2023년 1월 28일(토)</p></li>
+<li><p>장소 : 위플레이스 강남본점(서울시 강남구 강남대로 340, 경원빌딩 3층)</p>
+<p>(http://weplace.biz/31 )</p></li>
+<li><p>수강료 : 15만원</p></li>
+</ul>
+</section>
+<section id="강의내용" class="level2">
+<h2 class="anchored" data-anchor-id="강의내용">강의내용</h2>
+<table class="table">
+<colgroup>
+<col style="width: 26%">
+<col style="width: 73%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>시간</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>13:00-13:50</td>
+<td>최소한의 수학지식 및 생존분석 소개</td>
+</tr>
+<tr class="even">
+<td>14:00-14:50</td>
+<td>Kaplan-Meier 생존곡선과 로그순위검정</td>
+</tr>
+<tr class="odd">
+<td>15:00-16:00</td>
+<td>콕스비례위험모형, 비례위험 가정의 평가, 층화된 비례위험모형, 시간의존공변량</td>
+</tr>
+<tr class="even">
+<td>16:00-17:00</td>
+<td>모수적 회귀모형을 사용한 회귀분석</td>
+</tr>
+<tr class="odd">
+<td>17:00-17:30</td>
+<td>질의 및 응답</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="강의교재" class="level2">
+<h2 class="anchored" data-anchor-id="강의교재">강의교재</h2>
+<p>의료인을 위한 R생존분석(한나래, 2022)</p>
+<p><img src="images/8955662947_1%20(1).jpg" class="img-fluid"></p>
+</section>
+<section id="기타사항" class="level2">
+<h2 class="anchored" data-anchor-id="기타사항">기타사항</h2>
+<ul>
+<li><p>주차지원은 안됩니다.</p></li>
+<li><p>카드 결제 및 세금계산서 발행 가능합니다.</p></li>
+<li><p>강의실은 80인실이지만 원활한 강의 진행을 위해 선착순 50명으로 마감합니다.</p></li>
+</ul>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
