@@ -2,16 +2,17 @@
 title: "생존분석소개"
 format: revealjs
 editor: visual
+author: 문건웅
 ---
 
 ## 생존분석이란 무엇인가?
 
-```{r fig.height=1,out.height="10%"}
+```{r fig.height=1,out.height="15%"}
 library(ggplot2)
 ggplot()+
  annotate("segment",x=3,xend=8,y=0,yend=0,arrow=arrow(angle=15,ends="last",type="closed"))+
  theme_classic()+
- annotate("text",x=5,y=0,label="TIME",vjust= -1.5,size=5)+
+ annotate("text",x=5,y=0,label="TIME",vjust= -1.0,size=5)+
  annotate("text",x=8,y=0,label="Event",hjust= -0.5,size=5)+
  annotate("text",x=0,y=0,label="Start follow-up",hjust= -0.5,size=5)+
  theme(axis.line = element_blank(), axis.text=element_blank(),axis.ticks = element_blank())+
@@ -180,7 +181,8 @@ $$T=survival\ time(T\geq 0)$$
 -   생존시간 $T$중 관심있는 특정한 값
 -   암 수술 후 5년 이상 생존했는가?
 
-## $$T > t=5$$
+$$T > t=5$$
+---
 
 ### 소문자 $d$
 
@@ -264,11 +266,12 @@ ggplot()+
 ::: incremental
 -   생존함수는 증가하지 않는다. 즉 $t$가 증가함에 따라 감소한다.
 -   $t=0$ 일때 $S(t)=S(0)=1$이다. 즉, 연구가 시작되었을 때 아직 event가 일어나지 않았으므로 생존함수는 1이다.
+:::
+:::
+:::
+::: incremental
 -   $t=\infty$ 일때 $S(t)=S(\infty)=0$이다. 즉 이론적으로는 연구기간의 제한이 없다면 결국 모든 대상자가 사망하므로 생존함수는 0이다.
 :::
-:::
-:::
-
 ## 실제 $\hat{S}(t)$ {auto-animate="true"}
 
 ```{r,fig.height=8,fig.width=12}
@@ -417,3 +420,121 @@ ggplot(df1,aes(x=x,y=y))+
      - $h(t) \geq 0$: 항상 음수가 아닌 값을 갖는다. 
      - $0 \leq h(t) \leq \infty$: 0부터 무한대의 값을 가질 수 있다. 
 :::     
+
+## 생존분석에서 위험함수에 관심을 갖는 이유
+
+- 생존함수는 그 시간까지의 누적생존을 나타내지만 위험함수는 순간적인 실패가능성을 이야기한다.
+- 생존데이터에 맞는 특정한 모형을 찾는데 사용될 수 있다. 지수분포, 와이블분포, 로그정규분포 등의 모형이 사용된다.
+- 생존데이터를 수학적으로 분석할 때 매개가 된다. 
+
+## 생존분포의 다른 용어들
+
+
+- 누적분포함수(cumulative distribution function, CDF), $F(t)$
+
+$$F(t)=P(T \leq t)=1-S(t),\ 0<t<\infty$$
+
+- 확률밀도함수(probability density function, PDF), $f(t)$는 CDF의 변화율이다. 
+
+$$f(t)=\frac{d}{dt}F(t)=-\frac{d}{dt}S(t)$$
+---
+
+- 위험함수는 PDF 및 생존함수와 관계가 있으며 다음과 같이 쓸 수 있다. 
+
+$$h(t)=\frac{f(t)}{S(t)}$$
+
+- 누적위험함수(cumulative hazard function)는 위험함수 아래의 면적을 특정시간 $t$까지 적분한 것이다.
+
+$$H(t)=\int_0^th(u)du$$
+
+## 생존함수와 위험함수
+
+일반적으로 생존함수와 누적함수는 다음과 같은 관계를 갖는다. 
+
+$$S(t)=exp[-\int_0^th(u)du]=exp(-H(t))$$
+
+$$h(t)=-[\frac{dS(t)/dt}{S(t)}]=-\frac{S'(t)}{S(t)}=-\frac{d}{dt}log(S(t))$$
+
+따라서 $S(t)$ 를 알면  $h(t)$를 구할 수 있고 $h(t)$에서 $S(t)$를 구할 수 있다. 실제 데이터 분석에서는 컴퓨터 프로그램이 $S(t)$에서 $h(t)$로 수학적으로 변환해주므로 실제 생존분석을 하는 사람이 이 공식을 사용할 일은 없다.  여기서 기억해야 하는 것은 $S(t)$나 $h(t)$ 둘 중 하나를 알면 다른 하나도 계산할 수 있다는 것이다.  
+
+## 생존분석의 목표
+
+생존분석의 기본적인 목표는 세가지이다.
+
+1. 생존데이터로부터 생존함수와 위험함수를 추정한다.
+1. 생존함수와 위험함수를 비교한다.
+1. 설명변수들과 생존시간의 관계를 평가한다. 
+
+---
+### 생존데이터로부터 생존함수와 위험함수를 추정
+
+::: columns
+::: {.column width="50%"}
+```{r,out.width="100%",out.height="100%",fig.height=10}
+df <- data.frame(x1 = 0, x2 = 3, x3=10,y1 = 1, y2 = 0.6,y3=0)
+ggplot()+ 
+  geom_curve(aes(x = x1, y = y1, xend = x2, yend = y2), 
+             data = df, curvature = -0.2,size=1)+
+  geom_curve(aes(x = x2, y = y2, xend = x3, yend = y3), 
+             data = df, curvature = 0.35,size=1)+
+  theme_classic()+
+  scale_x_continuous(breaks=c(0),labels=c(0))+
+  scale_y_continuous(breaks=c(0,1),labels=c(0,1))+
+  theme(axis.text=element_text(size=15),title=element_text(size=15))+
+  expand_limits(y=0,x=11)+
+  labs(x="t",y="S(t)")
+```
+:::
+
+::: {.column width="50%"}
+```{r,out.width="100%",out.height="100%",fig.height=10}
+
+df <- data.frame(x1 = 0, x2 = 7, x3=10 ,y1 = 1, y2 = 0.8,y3=0)
+ggplot()+ 
+  geom_curve(aes(x = x1, y = y1, xend = x2, yend = y2), 
+             data = df, curvature = -0.16,size=1)+
+    geom_curve(aes(x = x2, y = y2, xend = x3, yend = y3), 
+               data = df, curvature = -0.2,size=1)+
+  theme_classic()+
+  scale_x_continuous(breaks=c(0),labels=c(0))+
+  scale_y_continuous(breaks=c(0,1),labels=c(0,1))+
+  theme(axis.text=element_text(size=15),title=element_text(size=15))+
+  expand_limits(y=0,x=11)+
+  labs(x="t",y="S(t)")
+```
+:::
+:::
+---
+### 생존함수와 위험함수를 비교
+
+```{r,out.width="100%",fig.height=8}
+df <- data.frame(x1 = 0, x2 = 6, x3=10 ,y1 = 1, y2 = 0.4,y3=0)
+col=scales::hue_pal()(2)
+
+ggplot()+ 
+  geom_curve(aes(x = x1, y = y1, xend = x2, yend = y2), 
+             data = df, curvature = 0.4,size=1,color=col[1])+
+  geom_curve(aes(x = x2, y = y2, xend = x3, yend = y3), 
+             data = df, curvature = -0.2,size=1,color=col[1])+
+  geom_curve(aes(x = x1, y = y1, xend = x2+0.1, yend = y2+0.02), 
+             data = df, curvature = -0.3,size=1,color=col[2])+
+  geom_curve(aes(x = x2+0.1, y = y2+0.02, xend = x3, yend = y3), 
+             data = df, curvature = -0.2,size=1,color=col[2])+
+  theme_classic()+
+  scale_x_continuous(breaks=c(0,6),labels=c(0,6))+
+  scale_y_continuous(breaks=c(0,1),labels=c(0,1))+
+  annotate("text",x=5.4,y=0.8,label="Treatment",size=6,color=col[2])+
+  annotate("text",x=2,y=0.45,label="Placebo",size=6,color=col[1])+
+  theme(axis.text=element_text(size=15),title=element_text(size=15))+
+  expand_limits(y=0,x=11)+
+  labs(x="t",y="S(t)")
+```
+
+## 선형회귀 및 로지스틱회귀 분석과의 차이
+
+
+ 모형  | 반응변수 | 효과추정
+-------|-----------|---------
+생존분석 |  time to event(with censoring) |  Hazard ratio $e^\beta$ 
+선형회귀 | 연속형변수(예:자동차의 연비)  | 회귀계수 $\beta$
+로지스틱회귀 |  이분형변수(예: 사망/생존) | odds ratio $e^\beta$ 

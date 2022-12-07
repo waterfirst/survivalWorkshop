@@ -1,0 +1,504 @@
+---
+title: "KM생존곡선, 로그순위검정"
+format: revealjs
+editor: visual
+author: 문건웅
+---
+
+## Kaplan-Meier(KM) 생존곡선
+
+```{r,echo=TRUE}
+library(autoReg)
+library(survival)
+library(survminer)
+library(howto)
+library(flextable)
+library(ftExtra)
+library(tidyverse)
+
+data=subset(anderson,rx==0)  ## 입력할 때 등호가 두 개("==")인 것을 주의 
+data
+```
+
+## 중도절단자료 표시 
+
+```{r,echo=TRUE}
+data$time
+```
+
+. . .
+
+<br/>
+
+```{r,echo=TRUE}
+with(data,Surv(time,status))
+```
+
+## 평균생존시간($\bar{T}$)
+
+- 평균생존시간($\bar{T}$)은 중도절단을 고려하지 않고 생존시간의 평균을 계산한다. 
+- 중도절단된 자료는 정확한 생존시간을 알 수 없으므로 실제 생존시간은 평균생존기간보다 길다.
+- 평균위험률(average hazard rate, $\bar{h}$)은 전체 실패 수를 생존시간의 합계로 나눈 값이다.
+
+. . .
+
+```{r,echo=TRUE}
+anderson %>% 
+  group_by(rx) %>%
+  summarize(T=mean(time), h=sum(status)/sum(time))
+```
+
+---
+
+## median survival
+
+median survival은 생존률이  50% 인 시간이다. 
+
+```{r,echo=TRUE}
+fit=survfit(Surv(time,status)~1,data=data)
+fit
+```
+
+## 각 시기별 생존률
+
+```{r,echo=TRUE}
+summary(fit)
+```
+
+
+
+## 생존률의 95% 신뢰구간
+
+$$\hat{S}(t) \pm 1.96 \times \sqrt{\hat{Var}(\hat{S}(t))}$$
+으로 계산하며 생존률의 추정 분산 $\hat{Var}(\hat{S}(t))$는 Greenwood 식(Greenwood's formula)을 사용하여 계산한 것이다.
+
+$$\hat{Var}(\hat{S}(t)=(\hat{S}(t))^2\times\sum_{f:t_{(f)}\leq t}[\frac{m_f}{n_f(n_f-m_f)}]$$
+
+
+## 생존률의 계산
+
+
+```{r,echo=TRUE,eval=FALSE}
+howto(fit) %>% 
+  highlight(i=1,j=6,color="yellow") %>%
+  highlight(i=2,j=c(2,3,5),color="yellow")
+```
+
+```{r}
+howto(fit) %>% 
+  highlight(i=1,j=6,color="yellow") %>%
+  highlight(i=2,j=c(2,3,5),color="yellow") %>% fontsize(size=15) %>% plot()
+```
+
+---
+## 6주째 생존률 $\hat{S}(6)$ 추정
+
+- 6주째에 3명에서 event가 발생
+- 6주 째의 n.risk는 21명 
+- 이 중 event가 발생한 3명을 제외하고 18명이 생존
+
+따라서 6주째 생존률은 다음과 같다. $\hat{S}(6)$ 은 $S(6)$의 추정량이라는 뜻이다. 
+
+$$\hat{S}(6)=1 \times \frac{(21-3)}{21} = 1\times\frac{18}{21}=0.8571$$
+
+## 7주째 생존률 $\hat{S}(7)$ 추정
+
+7주 째의 number at risk는 6주째에 3명 실패(event 발생), 1명 중도절단되어 17명이고 생존률은 $0.8571 \times (16 \div 17)=0.8067$ 이 된다. 이 값은 다음과 같다.
+
+$$\hat{S}(7)=1\times \frac{18}{21} \times \frac{16}{17}=0.8067$$
+
+
+. . .
+
+
+### 13주째 생존률은 다음과 같이 계산된다. 
+
+$$\hat{S}(13)=1\times \frac{18}{21} \times \frac{16}{17}\times\frac{14}{15}\times \frac{11}{12}=0.6902$$
+
+
+## 생존률그래프
+
+```{r,echo=TRUE}
+plot(fit)
+```
+
+## Median survival 
+
+```{r,echo=TRUE}
+plot(fit)
+median=fit$time[min(which(fit$surv<0.5))]
+arrows(0,0.5,median,0.5,angle=15,col="red")
+arrows(median,0.5,median,0,angle=15,col="red")
+text(median,0,median,pos=1,offset=0.1)
+```
+
+## ggsurvplot
+
+survminer 패키지의 ggsurvplot()을 이용하면 보다 보기좋은 그래프를 얻을 수 있다. 
+
+```{r,echo=TRUE}
+library(survminer)
+ggsurvplot(fit,data=data)
+```
+
+##  생존률과 조건부확률
+
+6주째에 3명에서 event가 발생하였다. 따라서 생존률은 $1.0 \times (21-3) \div 21 = 18\div21=0.8571$이 된다. 이를 달리 표현하면 6주까지 살아있는 사람 중 6주를 초과하여 살아있는 비율이다.
+
+$$\hat{S}(6)= P(T>6 | T\geq 6) = \frac{18}{21} $$
+
+## 조건부확률
+
+A라는  사건이 일어날 확률을 $P(A)$, B라는 사건이 일어날 확률을 $P(B)$라고 하면 사건 B가 일어났다는 가정하에 사건 A가 일어날 조건부확률을 $P(A|B)$로 표기한다. 이 조건부확률은 다음과 같다.  
+
+$$P(A|B)=\frac{P(A\cap B)}{P(B)}$$
+
+A와 B가 동시에 일어날 확률 $P(A\cap B)$는 다음과 같다.
+
+$$P(A \cap B)=P(A|B)\times P(B)= P(B|A)\times P(A)$$
+
+##  
+
+따라서 조건부확률 $P(A|B)$를 다음과 같이 쓸 수 있다..
+
+$$P(A|B)=\frac{P(A\cap B)}{P(B)}=\frac{P(A) \times P(B|A)}{P(B)}$$
+
+위에서 $\hat{S}(6)= P(T>6 | T\geq 6)$는 조건부 확률로 $T>6$인 경우 항상 $T \geq 6$ 이므로 다음과 같이 쓸 수 있다.
+
+\begin{align*}
+P(T>6\  |\  T\geq 6)&=\frac{P(T >6)\times P(T \geq6\ |\ T> 6)}{P(T\geq 6)}\\
+&=\frac{P(T>6)}{P(T \geq6)}=\frac{18}{21}
+\end{align*}
+
+## K-M 생존율의 일반화
+
+위에서 살펴본 K-M 생존률을 일반화하면 다음과 같다. f번째 시간 $t_f$의 생존률은 그 시간 전까지의 추정생존율에 조건부확률인 $P(T > t_{(f)}\ |\ P \geq t_{(f)})$을 곱한 값이 된다. 
+
+$$\hat{S}(t_{(f)})=\hat{S}(t_{(f-1))}\times\hat{P}(T>t_{(f)}\ |\ T \geq t_{(f)})$$
+K-M 생존률을 구하는 승법극한추정량(product limit estimator)은 다음과 같다.
+
+$$\hat{S}(t_{(f)})=\prod_{i=1}^{f}\hat{P}(T>t_{(f)}\ |\ T \geq t_{(f)})$$
+
+
+##  연습문제 
+
+anderson1 데이터를 이용해 생존곡선을 구하고 있다. 앞절에서는 설명의 편의상 치료군만을 대상으로 생존률을 구하였으나 치료군, 대조군 모두에서 생존률을 구하고자 한다. 다음 표에서 빈칸을 채우시오.   
+
+```{r}
+fit=survfit(Surv(time,status)~rx,data=anderson1)
+howto(fit) %>% hide(i=5:7,j=6:7) %>% hide(i=14:17,j=6:7,color="blue") %>% plot()
+```
+
+##
+
+```{r,echo=TRUE}
+fit=survfit(Surv(time,status)~rx,data=anderson1)
+howto(fit) %>% plot()
+```
+
+
+## 로그순위검정
+
+- 두 군간의 KM 생존곡선비교
+- 세 군 이상인 경우 로그순위검정
+- 로그순위검정의 대안
+- 층화된 로그순위검정
+
+## 로그순위검정
+
+- 두 개의 생존곡선이 통계적으로 동등한지 검정
+- 두 개의 생존곡선을 전체적으로 볼 때 true survival curve가 다르다는 근거가 없다는 뜻이다.
+- 두 개의 생존곡선을 전체적을 비교하기 위해 각각의 시간에서 두 군의 기대값과 관찰값의 차이를 구하여 검정통계량을 계산하는 카이제곱 검정의 일종
+
+
+## 
+
+
+```{r,echo=TRUE}
+fit1=survfit(Surv(time,status)~rx,data=anderson1)
+summary(fit1)
+```
+
+
+##
+
+```{r,echo=TRUE}
+ggsurvplot(fit1,data=anderson1,pval=TRUE)
+```
+
+## 로그순위검정
+
+```{r,echo=TRUE}
+survdiff(Surv(time,status)~rx,data=anderson1)
+```
+
+## 
+
+```{r,echo=TRUE}
+ft=howto2(fit1)
+ft %>% highlight(i=2,j=c(2:7)) %>% plot()
+```
+
+## 
+
+- 2주째에 n.risk는 대조군과 실험군에서 각각 19,21명이며 실패는 대조군에서 2, 치료군에서 0이 관찰되었다. 
+- 실패의 기대값은 대조군은 $(n1/(n1+n2))\times(n1+n2)$이며 치료군은 $(n2/(n1+n2))\times(n1+n2)$ 이다. 
+- 관찰값-기댓값의 추정분산은 다음 공식으로 계산한다.
+
+$$Var(O_i-E_i)=\frac{n1n2(f1+f2)(n1+n2-f1-f2)}{(n1+n2)^2(n1-n2-1)}$$
+
+## 로그순위 검정량
+
+$$Log-rank\ statistic= \frac{(O_2-E_2)^2}{Var(O_2-E_2)}=\frac{(-10.25)^2}{6.26}\approx16.79$$
+
+```{r,echo=TRUE}
+attr(ft,"x2")
+pchisq(attr(ft,"x2"),df=1,lower.tail=FALSE)
+```
+
+
+## 세 군 이상인 경우 로그순위검정
+
+- 세 군 이상인 경우의 로그순위 검정도 survdiff()함수를 통해 시행할 수 있다. 
+- 로그순위 검정의 귀무가설(Null hypothesis: $H_0$)은 "모든 생존곡선이 동등하다" 이다. 
+- 세 군 이상의 로그 순위검정을 위하여는 각 군의 관찰값과 기대값의 합의 분산과 공분산을 포함하는 복잡한 수식이 사용되지만 수작업으로 계산하지는 않는다. 
+
+## 예제: survival 패키지의 대장암데이터
+
+- stage B/C의 대장암 환자의 데이터
+- 관찰군(Obs(ervation))과 Lev(amisole), Lev(amisole)+5-FU 세 군의 생존을 비교한다.  
+
+```{r, echo=TRUE}
+data(cancer,package="survival")
+survdiff(Surv(time,status)~rx,data=colon)
+```
+
+## 통계량 계산
+
+다음의 근사식이 사용되는데 이 통계량은 군의 갯수-1의 자유도를 갖는 카이제곱 분포를 따른다. 
+
+$$\chi^2 \approx \sum_{i=1}^{n} \frac{(O_i-E_i)^2}{E_i}$$
+
+## 
+
+```{r,echo=TRUE}
+fit2=survfit(Surv(time,status)~rx,data=colon)
+ggsurvplot(fit2,data=colon,pval=TRUE)
+```
+
+## 로그순위검정의 대안
+
+- 통계량을 구할때 가중치를 주어 계산한다. 
+- Wilcoxon, Tarone-Ware, Peto, Flemington-Harrington 검정 등
+- 가중치를  주는 방법에 따라 초기의 실패에 더 가중치를 주기도 한다. 
+
+$$Test\ statistic=\frac{(\sum_f w(t_f)(O_i-E_i))^2}{Var(\sum_f w(t_f)(O_i-E_i{}{}))}$$
+
+위의 식에서 가중치 $W(t_f)=weight\ at\ fth\ failure\ time$ 으로 여러 검정 방법들은 가중치에 따라 그 결과가 달라진다.
+
+## 
+
+```{r,echo=FALSE}
+a=c("Log Lank","Wilcoxon","Tarone-Ware","Peto","Flemington-Harrington")
+b=c("1","$n_f$","sqrt($n_f$)","$\\hat{s}(t_f)$","$\\hat{S}(t_{(f-1)})^P\\times [1 - \\hat{S}(t_{(f-1)})]^q$")
+df=data.frame(a,b)
+names(df)=c("Test Statistic","$w(t_f)$")
+flextable(df) %>% colformat_md(part="all") %>% width(j=1,width=2) %>% 
+  width(j=2,width=3) %>% align(align="center",part="all") %>% fontsize(size=15) %>% plot()
+```
+
+## 예제: 췌장암 데이터 
+
+- pfs: 병기의 진행이 없는 생존(progression free survival)
+- 병기에 따른 생존곡선을 비교해본다. 
+
+```{r,echo=TRUE}
+data(pancreatic2,package="asaur")
+survdiff(Surv(pfs)~stage,data=pancreatic2)
+```
+
+로그순위검정에서 국소진행암(LA, locally advanced)과 전이된암(M, metastatic)의 pfs 생존곡선이 동등하지 않다는 근거는 없다고 할 수 있다. 
+
+## 생존곡선
+
+```{r,echo=TRUE}
+fit4=survfit(Surv(pfs)~stage,data=pancreatic2)
+ggsurvplot(fit4,data=pancreatic2,pval=TRUE)
+```
+
+## Peto 수정에 의한 로그순위검정
+
+
+```{r,echo=TRUE}
+survdiff(Surv(pfs)~stage,data=pancreatic2,rho=1)
+```
+
+검정결과 p 값은 0.03으로 유의하다. 이 검정방법은 초기의 생존시간에 가중치를 주기 때문에 국소진행암이 초기에 생존에 유리한 것으로 나타난다. 
+
+## 생존곡선 
+
+```{r,echo=TRUE}
+ggsurvplot(fit4,data=pancreatic2,pval=TRUE,log.rank.weights="S1")
+```
+
+## 로그순위검정 검정량 계산
+
+로그순위검정을 위해 기대값을 계산하고자 한다. 다음 예에서 빈칸을 채우시오
+
+```{r}
+fit=survfit(Surv(time,status)~x,data=aml)
+howto2(fit) %>% hide(i=5:7,j=6:7) %>% hide(i=10:11,j=3:5,color="blue") %>% plot()
+```
+
+
+## 
+
+
+```{r,echo=TRUE}
+fit=survfit(Surv(time,status)~x,data=aml)
+howto2(fit) %>% plot()
+```
+
+
+## 층화된 로그순위검정
+
+- 두 군간의 생존곡선을 비교할 때 다른 공변량을 보정해야 할 경우 층화된 비례위험모형을 사용할 수도 있고 보정할 공변량의 수준이 적을 때는 층화된 로그순위검정을 할 수도 있다. 
+- 치료한 병원, 나이군, 성별 등이 층화할 변수의 예이다. 
+- 층화된 로그순위검정의 귀무가설은 $H_0: h_{0j}(t)=h_{1j(t)}\ for\ j=1,2,...,G$이다. 
+
+##
+
+- 이때 두 번 째 변수의 각 수준에 대해 스코어통계량 $U_{0g}$와 분산 $V_{0g}$를 계산한다.(이 때의 $g=1,...,G$는 첫 번째 변수의 group이다). -
+- 검정통계량은 
+$$\chi^2=\frac{(\sum_{g=1}^G U_{0g})^2}{\sum_{g=1}^G V_{0g}^2}$$
+이며 이 통계량은 자유도가 1인 카이제곱분포를 따른다.
+
+## 예제
+
+asaur 패키지의 pharmacoSmoking은 금연에 관한 치료로 패치만을 사용한 군과 복합약물치료를 한 군 간의 재발(다시 흡연)까지의 시간에 관한 데이터이다. 두 군간의 생존을 비교하면 다음과 같다.
+
+```{r,echo=TRUE}
+data(pharmacoSmoking,package="asaur")
+survdiff(Surv(ttr,relapse)~grp,data=pharmacoSmoking)
+```
+
+##
+
+
+```{r,echo=TRUE}
+fit=survfit(Surv(ttr,relapse)~grp,data=pharmacoSmoking)
+ggsurvplot(fit,data=pharmacoSmoking,pval=TRUE,legend=c(0.7,0.85))
+```
+
+## 층화된 로그순위검정
+
+나이의 영향을 보정하기 위해 ageGroup2를 사용하여 층화된 로그순위검정을 하면 다음과 같다. 
+
+```{r,echo=TRUE}
+survdiff(Surv(ttr, relapse) ~ grp+strata(ageGroup2),data=pharmacoSmoking)
+```
+
+
+##
+
+```{r,echo=TRUE}
+labs=c("Combination, age 21-49","Combination, age 50+","patchOnly, age 21-49","patchOnly, age 50+")
+ggsurvplot(survfit(Surv(ttr, relapse) ~ grp+strata(ageGroup2),data=pharmacoSmoking),
+           data=pharmacoSmoking,legend=c(0.7,0.85),legend.labs=labs,pval=TRUE)
+```
+
+## 혼동변수의 효과
+
+
+- "Applied Survival Analysis Using R"  p51-52
+- 대조군과 치료군을 비교하기 위한 임상연구를 시뮬레이션한 데이터를 만든다. - 생존시간은 지수적으로 분포한다고 가정하고 질환이 아주 치명적이어서 중도절단이 없는 것으로 가정한다. 
+- 혼동변수로 두 가지 genotype(유전자타입)인  wild type(정상)과 mutant type(돌연변이)을 가정하고 이 중 돌연변이인 경우 상당히 나쁜 예후를 보이는 것으로 가정한다. 
+- 구체적으로는 대조군의 mutant인 경우 매일 0.03의 위험비를 보이고 치료하는 경우 위험을 0.55의 비율로 감소시키는 것으로 한다. 정상인 wild type에서는 mutant에 비해 위험비가 20%로 감소하는 것으로 하고 치료의 효과는 비슷한 것으로 한다. 
+
+##
+
+R을 이용해 네 가지 위험비를 다음과 같이 정의한다.
+
+```{r,echo=TRUE}
+lambda.mutant.0 <- 0.03 
+lambda.mutant.1 <- 0.03*0.55 
+lambda.wt.0 <- 0.03*0.2 
+lambda.wt.1 <- 0.03*0.2*0.55
+```
+
+## 
+
+다음으로 무작위변수 발생기를 초기화 시키고 지수분포를 갖는 변수를 무작위로 발생시켜 geneConfounder 데이터를 만든다.
+
+```{r,echo=TRUE}
+set.seed(4321)
+tt.control.mutant <- rexp(25, rate=lambda.mutant.0) 
+tt.treat.mutant <- rexp(125, rate=lambda.mutant.1) 
+tt.control.wt <- rexp(125, rate=lambda.wt.0) 
+tt.treat.wt <- rexp(25, rate=lambda.wt.1)
+ttAll <- c(tt.control.mutant, tt.treat.mutant, tt.control.wt, 
+           tt.treat.wt)
+
+status <- rep(1, length(ttAll)) 
+genotype <- c(rep("mutant", 150), rep("wt", 150)) 
+trt <- c(rep(0, 25), rep(1, 125), rep(0, 125), rep(1, 25))
+
+geneConfounder <- data.frame(ttAll, status, trt, genotype)
+```
+
+##
+
+```{r,echo=TRUE}
+geneConfounder
+```
+
+##
+
+이 데이터를 이용해 치료(trt)에 따른 두 생존곡선을 비교해 본다. 
+
+```{r,echo=TRUE}
+survdiff(Surv(ttAll, status) ~ trt, data=geneConfounder) 
+```
+
+## 
+
+```{r,echo=TRUE}
+fit=survfit(Surv(ttAll, status) ~ trt, data=geneConfounder)
+labs=c("Control","Treated")
+ggsurvplot(fit,data=geneConfounder,legend=c(0.7,0.9),legend.title="",
+           legend.labs=labs,pval=TRUE)
+```
+
+로그순위 검정의 결과 및 생존곡선에서 치료를 하면 생존이 감소하는 것으로 보이고 p값은 매우 낮은 것을 알 수 있다. 
+
+## 층화된 로그순위검정
+
+하지만 혼동변수인 genotype의 영향을 보정하여 생존곡선을 그리고 로그순위 검정을 해본다. 
+
+```{r,echo=TRUE}
+survdiff(Surv(ttAll, status) ~ trt + strata(genotype), data=geneConfounder) 
+```
+
+
+## 생존곡선
+
+
+```{r, echo=TRUE}
+fit=survfit(Surv(ttAll, status) ~ trt+strata(genotype), data=geneConfounder)
+labs=c("Control Mutant","Control Wildtype","Treated Mutant","Treated Wildtype")
+ggsurvplot(fit,data=geneConfounder,legend=c(0.75,0.85),legend.labs=labs)
+```
+
+## 
+
+
+- survdiff()함수의 출력결과는 어느 치료가 우월한지 알아보기가 쉽지 않기 때문에 생존곡선을 그려 비교하는 것이 중요하다. 
+- 혼동변수인 genotype의 영향을 보정한 후 치료군의 생존이 대조군보다 우월한 것으로 나타났으며 매우 유의한 p값을 보인다. 
+- 이 연구의 결과는 다음과  같이 해석할 수 있다. 
+     1. 치료군은 대조군에 비해 우월한 생존을 보인다.
+     1. wild type은 mutant에 비해 우월한 생존을 보인다.
+     1. 대조군에 비해 치료군에 mutant가 많이 포함되어 있어 유전자타입을 고려하지 않은 경우 치료군의 생존이 더 나쁜 것으로 보였다. 
+     
+## 
+     
+- 관찰연구에서는 이러한 형태의 혼동변수의 영향이 흔히 관찰된다. 예를 들어 민족 간에 돌연변이의 출현빈도도 다르게 나타나고 새로운 실험적인 치료를 받을 수 있는 기회도 국가마다 다를 수 있기 때문에 혼동변수가 의심되는 경우 혼동변수의 영향을 보정하는 것이 바람직하다.  
