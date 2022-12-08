@@ -1,0 +1,361 @@
+---
+title: "콕스비례위험모형"
+author: "문건웅"
+format: revealjs
+editor: visual
+---
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,comment=NA,out.width="70%",dpi=300,fig.align="center",fig.pos="H")
+```
+
+## 내용
+
+::: columns
+::: {.column width="70%"}
+- 콕스PH모형에 적합시킨 여러 모형의 비교
+- 콕스PH모형식
+- 콕스PH모형의 강점
+- 콕스PH모형에서 회귀계수의 추정
+- 위험비의 계산
+- 콕스PH모형을 이용한 보정된 생존곡선
+- 콕스가능도
+- 여러 개의 공변량이 있을 때 콕스부분가능도
+:::
+::: {.column width="30%"}
+Sir David Cox
+(1924-2022)
+
+![](images/sir-david-cox-2014.jpg)
+
+:::
+:::
+
+
+## 콕스PH모형에 적합시킨 여러 모형의 비교{background="#43464B"}
+
+- anderson 데이터(autoReg 패키지)
+- 백혈병 환자 42명
+- 대조군(rx=1)과 치료군(rx=0)
+- 재발(status=1)까지의 생존기간
+- 성별(sex, 0: Female, 1:Male), 로그백혈구수(logWBC)
+
+##
+
+```{r}
+library(autoReg) 
+library(autoReg)
+library(survival)
+library(survminer)
+library(flextable)
+library(ftExtra)
+library(interpretCI)
+
+anderson
+```
+
+## 여러 모형의 비교
+
+
+```{.r code-line-numbers="1|2|3|5"}
+fit1=coxph(Surv(time,status)~rx, data=anderson)
+fit2=coxph(Surv(time,status)~rx+logWBC,data=anderson)
+fit3=coxph(Surv(time,status)~rx*logWBC,data=anderson)
+
+modelsSummaryTable(list(fit1,fit2,fit3)) %>% highlight(j=7,part="all")
+```
+
+. . .
+
+
+```{r,echo=FALSE}
+fit1=coxph(Surv(time,status)~rx, data=anderson)
+fit2=coxph(Surv(time,status)~rx+logWBC,data=anderson)
+fit3=coxph(Surv(time,status)~rx*logWBC,data=anderson)
+
+modelsSummaryTable(list(fit1,fit2,fit3)) %>% highlight(j=7,part="all") %>%
+fontsize(size=15,part="all") %>% plot()
+```
+## 위험비(Hazard Ratio)
+
+- 회귀계수와 HR: 첫번째 모형의 rx에 대한 회귀계수는 1.572
+ $$HR=e^{coef}=e^{1.572} \approx 4.817$$
+- R에서 자연로그의 역함수인 $e^x$는 다음과 같이 계산한다.
+
+```{r}
+exp(1.572)
+```
+
+## 회귀계수와 p 값
+
+```{.r}
+gaze(fit3) %>% myft() %>% highlight(i=1,j=1:4)
+```
+```{r,echo=FALSE,fig.height=2.5}
+gaze(fit3) %>% myft() %>% highlight(i=1,j=1:4) %>% 
+     fontsize(size=15,part="all") %>% plot()
+```
+
+. . .
+
+- z 통계량 (Wald통계량): 회귀계수/회귀계수의 표준오차
+```{r}
+2.375/1.705
+```
+
+## p 값
+
+- Wald 검정
+- 귀무가설 $H_0: coefficient=0$
+- p값은 표준정규분포에서 z 통계량보다 더 극단적인 값을 가질 확률이다. 이를 표준정규분포표에서 확인해보면 다음과 같다. 
+
+```{.r}
+show_z_table(z=1.392962)
+```
+```{r,echo=FALSE,fig.height=1}
+show_z_table(z=1.392962) %>% fontsize(size=15,part="all") %>%
+     plot()
+```
+
+## 
+
+이 값을 표준정규분포곡선에서 확인하면 다음과 같다. 
+
+```{r}
+draw_n(z=1.392962)
+```
+
+양측검정이므로 p값은 0.164가 된다. 따라서 귀무가설 $H_0$를 기각하기에는 근거가 부족하다. 
+
+## HR의  95% 신뢰구간
+
+- 회귀계수의 95% 신뢰구간 :  **회귀계수 $\pm 1.96\times$ 표준오차**로 정해진다. 설명변수 rx의 경우 회귀계수는 2.375, 회귀계수의 표준오차는 1.705이므로 회귀계수의 95% 신뢰구간은
+
+```{r}
+2.37491+c(-1,1)*1.96*1.70547
+```
+
+- HR의 95% 신뢰구간은 다음과 같이 계산된다.
+
+```{r}
+exp(2.37491+c(-1,1)*1.96*1.70547)
+```
+
+## 가능도비 검정
+
+```{.r}
+gaze(fit3) %>% myft() %>% highlight(i=1,part="footer")
+```
+
+```{r,echo=FALSE,fig.height=2.5}
+gaze(fit3) %>% myft() %>% highlight(i=1,part="footer") %>% fontsize(size=15,part="all") %>% plot()
+```
+
+- 가능도비 검정은 설명변수가 하나도 없는 영 모형(Null model)의 로그가능도와 현재 모형의 로그가능도를 비교한 것이다. 
+
+## 영모형
+
+- 영모형의 로그가능도
+
+```{r}
+fit0=coxph(Surv(time,status)~1,data=anderson)
+fit0
+```
+- 현재 모형의 로그가능도는 다음에서 알 수 있다. 
+```{r}
+fit3$loglik
+```
+
+
+##
+
+- 가능도비검정에 쓰이는 LR 통계량은 영모형의 로그가능도에 -2를 곱한 값과 현재모형의 로그가능도에 -2를 곱한 값의 차이이다.
+
+```{r}
+-2*(fit0$loglik)-(-2*(fit3$loglik[2]))
+```
+
+##
+
+- LR 통계량은 공변량의 갯수를 자유도로 하는 카이제곱분포를 따른다. 가능도비검정결과의 p값은 다음 R코드로 얻을 수 있다. 이 값은 R의 출력결과와 동일하다.
+
+```{r}
+pchisq(47.07177,df=3,lower.tail=FALSE)
+```
+
+
+## 모형의 비교: 상호작용을 포함할 것인가?
+
+```{.r}
+modelsSummaryTable(list(fit1,fit2,fit3)) %>% highlight(i=9,j=6,part="all") 
+```
+
+```{r,echo=FALSE}
+modelsSummaryTable(list(fit1,fit2,fit3)) %>% highlight(i=9,j=6,part="body") %>%
+fontsize(size=15,part="all") %>% plot()
+```
+- Wald 검정
+- 가능도비 검정
+- AIC(Akaike information criterion) 
+
+## 가능도비 검정
+
+ 상호작용이 없는 두 번 째 모형과 가능도비검정을 하기 위해 LR 통계량을 구해보면 다음과 같다. 
+
+```{r}
+-2*(fit2$loglik[2]-fit3$loglik[2])
+```
+
+이 통계량은 두 모형의 공변량의 갯수의 차이를 자유도로 하는 카이제곱분포를 따르므로 p값은 다음과 같다.
+
+```{r}
+pchisq(0.3594296,df=1,lower.tail=FALSE)
+```
+
+## 
+
+이 값을 카이제곱분포곡선에서 확인해보면 다음과 같다.
+
+```{r}
+draw_x2(q=0.3594296,df=1)
+```
+
+가능도비 검정의 p값(0.549)은 Wald test의 p값(0.546)과 같지는 않지만 거의 비슷한 결과을 보여준다. 만약 두 검정 결과가 다르다면 가능도비 검정이 보다 좋은 통계학적 특성을 가지고 있기 때문에 가능도비 검정을 사용해야 한다.
+
+## AIC를 이용한 모형의 선택
+
+- $AIC=2k-2log(\hat{L})$으로 계산되는데 $k$는 공변량의 갯수이고 $log(\hat{L})$는 로그가능도이다. 
+- 모형 3의 AIC 값은 
+
+```{r}
+2*3-2*fit3$loglik[2]
+```
+
+##
+
+- AIC 값은 낮을수록 좋은 모형이며 drop1()을 사용하면 현재모형과 설명변수를 하나 누락시킨 모형의 AIC 값을 비교해준다.
+
+```{r}
+drop1(fit3)
+```
+- 모형3에 비해 모형2 가 더 좋은 모형이다. 
+
+## 모형2와 모형 1의 비교
+
+모형2와 모형 1을 가능도비검정으로 비교해보면 다음과 같다.
+
+```{r}
+LR=-2*(fit1$loglik[2]-fit2$loglik[2])
+pchisq(LR,df=1,lower.tail=FALSE)
+```
+
+- 모형2의 Wald 검정(p< 0.001) 및 가능도비검정(p< 0.001) 결과 모형2의 예측변수 logWBC 는 통계적으로 유의한 변수임을 알 수 있다. 
+- 따라서 세 가지 모형 중 모형 2가 가장 좋은 모형으로 결론내릴 수 있다.
+
+- 모형 2의 rx에 대한 기술은 "**logWBC의 효과를 보정한 후 치료효과는 통계적으로 유의하며 위험비는 4.0(95% 신뢰구간 1.74-9.20)으로 추정된다.**"라고 기술할 수 있다.
+
+## 모형2의  위험비 
+
+```{r}
+modelPlot(fit2,widths=c(1,0,2.1,3))
+```
+
+## 보정된 생존곡선
+
+```{r}
+adjustedPlot(fit2,xnames="rx")
+```
+
+
+## 콕스PH모형 식(Formula){background="#43464B"}
+
+## 콕스PH모형 식(Formula)
+
+설명변수 $\mathbf{X}=(X_1,X_2,...,X_p)$가 있는 콕스비례위험모형의 위험함수는 다음 식으로 표현할 수 있다.
+
+$$h(t,\mathbf{X}) = h_0(t) \times e^{\sum_{i=1}^{p} \beta_iX_i}$$
+
+- 위의 위험함수는 설명변수 X를 가진 어떤 대상환자에서 t시간에서의 위험을 나타낸 것이다. 
+
+. . .
+
+
+|$h_0(t)$  | $exp(\sum_{i=1}^k\beta_iX_i)$|
+|:----------:|:-----------------------------:|
+|Baseline hazard | exponential|
+|Involves $t$     | Involves $X$|
+|but not $X$'s    | not not $t$|
+|                 | $X$'s are **time-independent**|
+
+
+## $X$'s involing t
+
+- time-dependent covariate
+- requires extentded Cox model(no PH) (chapter 7)
+
+## Time-independent variables
+
+- Values for a given individual do not change over time
+- Sex, Smoking status : assumed not to change once measured
+- Age, Weight : do not change much or effect on survival depends on one measurement
+
+## 기저위험함수
+
+- 모든 공변량이 0일 경우 시간 $t$에서의 위험함수는 $h_0(t)$와 같아지며 이와 같은 특성 때문에 $h_0(t)$를 **기저위험함수**라 부른다.
+
+\begin{align*}
+h(t,\mathbf{X}) &= h_0(t) \times e^{\sum_{i=1}^{p} \beta_iX_i} \\
+&= h_0(t) \times e^0 \longleftarrow X_1=X_2=...X_p=0 \\
+&=h_0(t)
+\end{align*}
+
+. . .
+
+- 또한 공변량이 없는 경우에도 시간 $t$에서의 위험함수 $h(t,X)=h_0(t)$가 된다. 
+
+
+## Cox model: semiparametric
+
+- 콕스PH모형의 기저위험함수 $h_0(t)$는 모수적 가정을 하지 않으므로 준모수적인(semiparametric) 방법이라고 할 수 있다.
+
+- 기저위험함수의 분포가 알려져 있는 모수적인 회귀모형을 사용한 생존분석 방법도 있는데 와이블(Weibull) 모형이 대표적이며 이는 제 8장에서 다룬다.  
+
+## Why the Cox PH Model Is Popular ?{background="#43464B"}
+
+## 콕스PH모형의 강점(1)
+
+- Cox PH model is **robust** : Will closely approximate correct parametric method
+
+- If correct model is:
+     - Weibull -> Cox model will approximate Weibull
+     - Exponential -> Cox model will approximate exponential
+
+. . .
+
+- Prefer parametric model if sure of correct model, e.g.,  use of goodness-of-fit test.
+
+- When in doubt, the Cox model is a **safe** choice
+
+
+## 콕스PH모형의 강점(2)
+
+- 콕스모형의 위험함수 식 중 지수부분인 $e^{\sum_{i=1}^{p} \beta_iX_i}$에 강점이 있다. 
+
+- 이 지수부분의 값은 항상 0 보다 큰 값이 되기 때문에 위험비가 0부터 무한대의 값을 가질 수 있다($0 \leq h(t,X) \leq \infty$).  
+
+## 콕스PH모형의 강점(3)
+
+- 기저위험함수인  $h_0(t)$를 계산할 필요없이 회귀계수 및 위험비의 추정이 가능하고 보정된 생존 곡선을 얻을 수 있다는 점이다
+
+- 마지막으로 생존시간 및 중도탈락에 대한 정보가 있다면 생존시간 및 중도탈락에 대한 정보를 무시하는 로지스틱회귀모형보다 콕스PH모형이 보다 선호된다.
+
+## 콕스PH모형에서 회귀계수의 추정{background="#43464B"}
+
+## 콕스PH모형에서 회귀계수의 추정
+
+```{r,echo=FALSE,fig.height=3}
+gaze(fit2) %>% myft() %>% highlight(j=2,part="all") %>% fontsize(size=15,part="all") %>% plot()
+```
+- 최대가능도(maximum likelihood) 추정량 : $\hat{\beta}_i$
+- 이 모형에서의 위험함수는 다음과 같이 추정할 수 있다.
+
+$$\hat{h}(t,X)=\hat{h}_0(t)\times e^{1.386rx+1.691logWBC}$$
