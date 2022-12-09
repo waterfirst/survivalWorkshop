@@ -392,6 +392,19 @@
   <p class="author">문건웅</p>
 </section>
 
+<section class="slide level2">
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Register.StartupHook("TeX Jax Ready",function () {
+  MathJax.Hub.Insert(MathJax.InputJax.TeX.Definitions.macros,{
+    cancel: ["Extension","cancel"],
+    bcancel: ["Extension","cancel"],
+    xcancel: ["Extension","cancel"],
+    cancelto: ["Extension","cancel"]
+  });
+});
+</script>
+</section>
 <section id="내용" class="slide level2">
 <h2>내용</h2>
 <div class="columns">
@@ -737,7 +750,9 @@ rx:logWBC  1 143.66</code></pre>
 <ul>
 <li>위의 위험함수는 설명변수 X를 가진 어떤 대상환자에서 t시간에서의 위험을 나타낸 것이다.</li>
 </ul>
-<div class="fragment">
+</section>
+<section id="section-6" class="slide level2">
+<h2></h2>
 <table>
 <thead>
 <tr class="header">
@@ -764,13 +779,12 @@ rx:logWBC  1 143.66</code></pre>
 </tr>
 </tbody>
 </table>
-</div>
 </section>
 <section id="xs-involing-t" class="slide level2">
 <h2><span class="math inline">\(X\)</span>’s involing t</h2>
 <ul>
 <li>time-dependent covariate</li>
-<li>requires extentded Cox model(no PH) (chapter 7)</li>
+<li>requires extended Cox model(no PH) (chapter 7)</li>
 </ul>
 </section>
 <section id="time-independent-variables" class="slide level2">
@@ -849,6 +863,656 @@ h(t,\mathbf{X}) &amp;= h_0(t) \times e^{\sum_{i=1}^{p} \beta_iX_i} \\
 <li>이 모형에서의 위험함수는 다음과 같이 추정할 수 있다.</li>
 </ul>
 <p><span class="math display">\[\hat{h}(t,X)=\hat{h}_0(t)\times e^{1.386rx+1.691logWBC}\]</span></p>
+</section>
+<section id="최대가능도-추정량ml-estimates" class="slide level2">
+<h2>최대가능도 추정량(ML estimates)</h2>
+<ul>
+<li>가능도함수(likelihood function)을 최대화하는 추정량</li>
+<li>가능도함수는 보통 <span class="math inline">\(L(\beta)\)</span>로 표기하는데 모형에서 고려할 여러 설명변수들( <span class="math inline">\(\beta\)</span>)의 함수라는 수학적인 표현이다.</li>
+</ul>
+</section>
+<section id="l-is-a-partial-likelihood" class="slide level2">
+<h2><span class="math inline">\(L\)</span> is a <strong>partial</strong> likelihood</h2>
+<ul>
+<li>콕스모형에서 사용하는 가능도함수는 <strong>부분</strong>가능도함수(<strong>partial</strong> likelihood)함수</li>
+<li>실패한 대상의 확률만을 고려한다</li>
+<li>중도절단된 대상들의 확률은 명시적으로 고려하지 않는다</li>
+</ul>
+</section>
+<section id="부분가능도-함수의-계산" class="slide level2">
+<h2>부분가능도 함수의 계산</h2>
+<p><span class="math display">\[L=L_1\times L_2\times L_3\times ... \times L_k = \prod_{j=1}^k L_j\]</span></p>
+<ul>
+<li>부분가능도 함수는 <span class="math inline">\(k\)</span>개의 실패시간에 해당하는 여러 가능도들의 곱으로 쓸 수 있다.</li>
+</ul>
+</section>
+<section id="section-7" class="slide level2">
+<h2></h2>
+<ul>
+<li><span class="math inline">\(L_f\)</span>
+<ul>
+<li>“risk set” <span class="math inline">\(R(t_{(f)})\)</span>
+<ul>
+<li><span class="math inline">\(j\)</span>번째 실패시간까지 생존한 위험의 대상들</li>
+<li>시간이 진행할수록 그 숫자가 감소한다.</li>
+</ul></li>
+<li>주어진 “risk set” <span class="math inline">\(R(t_{(f)})\)</span>에서 <span class="math inline">\(f\)</span>번째 실패시간의 가능도</li>
+<li>그 시간까지 생존했다는 조건 하에 그 시간에 실패할 가능성을 나타내는 조건부 확률이다.</li>
+</ul></li>
+</ul>
+</section>
+<section id="중도절단-데이터" class="slide level2">
+<h2>중도절단 데이터</h2>
+<ul>
+<li><p>부분가능도함수가 실패한 대상의 확률만을 고려하지만 중도절단된 대상들의 중도절단되기 전까지의 생존시간을 고려한다</p></li>
+<li><p><span class="math inline">\(f\)</span>번째 실패시간 이후에 중도절단된 대상들은 <span class="math inline">\(L_f\)</span>를 계산할 때 risk set으로 사용된다.</p></li>
+</ul>
+</section>
+<section id="steps-for-obtaining-ml-estimates" class="slide level2">
+<h2>Steps for obtaining ML estimates</h2>
+<ul>
+<li>모형에서 가능도함수를 만든다.</li>
+<li>가능도를 최대화하기 위해 컴퓨터를 사용하여 계산하는데 보통 로그가능도함수를 편미분한 방정식의 해를 구한다.</li>
+</ul>
+<p><span class="math display">\[\frac{\partial log L}{\partial \beta_i} =0,\ \ \  i=1,2,3,...,p\ \ (p=no\ of\ parameters)\]</span></p>
+</section>
+<section id="section-8" class="slide level2">
+<h2></h2>
+<ul>
+<li>최대부분가능도추정량 <span class="math inline">\(\hat{\beta}\)</span>를 기반으로 누적위험함수를 구하기 위해 Breslow 추정량을 이용한다.</li>
+</ul>
+<p><span class="math display">\[\hat{H_0}(t)=\sum_{t_i&lt;t}\hat{h_0}(t)=\sum_{t_i&lt;t}\frac{1}{\sum_{j \in R_j} e^{\beta x_i}}\]</span></p>
+<ul>
+<li>이번 강의 끝 부분에 작은 데이터를 가지고 ML 추정량을 구해본다.</li>
+</ul>
+</section>
+<section id="위험비의-계산" class="slide level2" data-background="#43464B">
+<h2>위험비의 계산</h2>
+</section>
+<section id="위험비의-계산-1" class="slide level2">
+<h2>위험비의 계산</h2>
+<ul>
+<li>위험비는 어떤 대상의 위험을 다른 대상의 위험으로 나눈 값이며 이들 대상은 설명변수 <span class="math inline">\(X\)</span>가 다른 대상이다.</li>
+<li>어떤 대상의 설명변수들을 <span class="math inline">\(X^*\)</span>라고 하고 다른 대상의 설명변수들을 <span class="math inline">\(X\)</span>라고 하면 위험비는 다음과 같이 나타낼 수 있다.</li>
+</ul>
+<p><span class="math display">\[\hat{HR}=\frac{\hat{h}(t,X^*)}{\hat{h}(t,X)}\]</span> - 위험비가 1 보다 작은 경우보다 1보다 큰 경우가 해석하기 쉽기 때문에 보통 위험이 큰 대상을 <span class="math inline">\(X^*\)</span>(예: 대조군)로 하고 위험이 작은 대상을 <span class="math inline">\(X\)</span>로 한다(예: 치료군).</p>
+</section>
+<section id="section-9" class="slide level2">
+<h2></h2>
+<p><span class="math display">\[\hat{HR}=\frac{\hat{h}(t,X^*)}{\hat{h}(t,X)} =\frac{\cancel{\hat{h_0}(t)}\times e^{\sum_{i=1}^p \hat{\beta}X^*_i}}{\cancel{\hat{h_0}(t)}\times e^{\sum_{i=1}^p \hat{\beta}X_i}} = e^{\sum_{i=1}^p \hat{\beta_i}(X^*_i-X_i)}\]</span> - 위의 식의 지수부분을 exp을 써서 바꾸면 다음과 같다.</p>
+<p><span class="math display">\[\hat{HR} =exp(\sum_{i=1}^p \hat{\beta_i}(X^*_i-X_i))\]</span></p>
+<div class="fragment">
+<ul>
+<li>따라서 위험비의 계산에서 시간에 따라 변화하는 기저위험함수가 사라지고 설명변수와 회귀계수 부분만 남게 된다.</li>
+<li>즉 위험비는 시간이 변하더라도 변하지 않고 일정하다.</li>
+<li>따라서 콕스는 위험비를 “비례위험”이라고 하였다.</li>
+</ul>
+</div>
+</section>
+<section id="첫번째-모형-하나의-설명변수" class="slide level2">
+<h2>첫번째 모형: 하나의 설명변수</h2>
+
+<img data-src="chap4_files/figure-revealjs/unnamed-chunk-26-1.png" style="width:70.0%" class="r-stretch quarto-figure-center"><p>설명변수가 하나(<span class="math inline">\(X_1\)</span>)이고 0과 1로 표현할 수 있는 경우는 <span class="math inline">\(X^*_1=1\)</span>이 되고 <span class="math inline">\(X_1=0\)</span>이 된다.</p>
+<p><span class="math display">\[\begin{align*}
+\hat{HR}&amp;=exp(\hat{\beta_1}(X_1^*-X_1)) \\
+&amp;=exp(\hat{\beta_1}(1-0))=e^{\hat{\beta_1}}= e^{1.572}=4.817
+\end{align*}\]</span></p>
+</section>
+<section id="두번째모형-두-개의-설명변수" class="slide level2">
+<h2>두번째모형 : 두 개의 설명변수</h2>
+
+<img data-src="chap4_files/figure-revealjs/unnamed-chunk-27-1.png" style="width:70.0%" class="r-stretch quarto-figure-center"><p><span class="math inline">\(X^*=(1,logWBC)\)</span>이고 <span class="math inline">\(X=(0,logWBC)\)</span>이다. logWBC가 같을 경우 대조군과 치료군의 위험비는 다음과 같다.</p>
+<p><span class="math display">\[\begin{align*}
+\hat{HR}&amp;=exp(\hat{\beta_1}(X_1^*-X_1)+\hat{\beta_2}(X_2^*-X_2)) \\
+&amp;=exp(1.386(1-0)+1.691(logWBC-logWBC)) \\
+&amp;=e^{1.386(1)+1.691(0)}= e^{1.386}=3.999
+\end{align*}\]</span></p>
+</section>
+<section id="세번째-모형-두-개의-설명변수와-상호작용" class="slide level2">
+<h2>세번째 모형: 두 개의 설명변수와 상호작용</h2>
+
+<img data-src="chap4_files/figure-revealjs/unnamed-chunk-28-1.png" style="width:70.0%" class="r-stretch quarto-figure-center"><p><span class="math inline">\(X^*=(1,logWBC,1\times logWBC)\)</span>이고 <span class="math inline">\(X=(0,logWBC, 0 \times logWBC)\)</span>이다.</p>
+</section>
+<section id="section-10" class="slide level2">
+<h2></h2>
+<p>logWBC가 같을 경우 대조군과 치료군의 위험비는 다음과 같다.</p>
+<p><span class="math display">\[\begin{align*}
+\small
+\hat{HR}&amp;=exp(\sum_{i=0}^3 \hat{\beta_i}(X^*_i-X_i)) \\
+&amp;=exp(2.375(1-0)+1.873(logWBC-logWBC)\\
+&amp; \;\;\;\;\;\;\;\;\; -0.318(1\times logWBC -0 \times logWBC)) \\
+&amp;=exp(2.375(1)-0.318\times logWBC)
+\end{align*}\]</span></p>
+<div class="fragment">
+<p>대조군과 치료군의 logWBC가 2일 경우 위험비는 다음과 같이 계산된다.</p>
+<p><span class="math display">\[\hat{HR}=exp(2.375(1)-0.318\times 2)=e^{1.739}=5.692\]</span></p>
+</div>
+</section>
+<section id="콕스ph모형을-이용한-보정된-생존곡선" class="slide level2" data-background="#43464B">
+<h2>콕스PH모형을 이용한 보정된 생존곡선</h2>
+</section>
+<section id="모형-1-rx에-따른-생존곡선-base-r" class="slide level2">
+<h2>모형 1: rx에 따른 생존곡선: base R</h2>
+<div class="sourceCode" id="cb38" data-code-line-numbers="1|2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1"></a>fit<span class="ot">=</span><span class="fu">survfit</span>(<span class="fu">Surv</span>(time,status)<span class="sc">~</span>rx,<span class="at">data=</span>anderson)</span>
+<span id="cb38-2"><a href="#cb38-2"></a><span class="fu">plot</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="chap4_files/figure-revealjs/unnamed-chunk-29-1.png" style="width:70.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="모형2-보정된-생존곡선-base-r" class="slide level2">
+<h2>모형2: 보정된 생존곡선: base R</h2>
+<div class="sourceCode" id="cb39" data-code-line-numbers="1|2-4|5|6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1"></a>fit2<span class="ot">=</span><span class="fu">coxph</span>(<span class="fu">Surv</span>(time,status)<span class="sc">~</span>rx<span class="sc">+</span>logWBC,<span class="at">data=</span>anderson)</span>
+<span id="cb39-2"><a href="#cb39-2"></a>rx<span class="ot">=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>)</span>
+<span id="cb39-3"><a href="#cb39-3"></a>logWBC<span class="ot">=</span><span class="fu">median</span>(anderson<span class="sc">$</span>logWBC)</span>
+<span id="cb39-4"><a href="#cb39-4"></a>newdata<span class="ot">=</span><span class="fu">data.frame</span>(rx,logWBC)</span>
+<span id="cb39-5"><a href="#cb39-5"></a><span class="fu">plot</span>(<span class="fu">survfit</span>(fit2,<span class="at">newdata=</span>newdata),<span class="at">col=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,<span class="at">lty=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
+<span id="cb39-6"><a href="#cb39-6"></a><span class="fu">legend</span>(<span class="st">"topright"</span>,<span class="at">legend=</span><span class="fu">c</span>(<span class="st">"treated"</span>,<span class="st">"control"</span>),<span class="at">col=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,<span class="at">lty=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="chap4_files/figure-revealjs/unnamed-chunk-30-1.png" style="width:70.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="autoregadjustedplot" class="slide level2">
+<h2>autoReg::adjustedPlot()</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a>fit2<span class="ot">=</span><span class="fu">coxph</span>(<span class="fu">Surv</span>(time,status)<span class="sc">~</span>rx<span class="sc">+</span>logWBC,<span class="at">data=</span>anderson)</span>
+<span id="cb40-2"><a href="#cb40-2"></a><span class="fu">adjustedPlot</span>(fit2,<span class="at">xnames=</span><span class="st">"rx"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="chap4_files/figure-revealjs/unnamed-chunk-31-1.png" style="width:70.0%" class="r-stretch quarto-figure-center"></section>
+<section id="설명변수가-여러-개-있는-경우" class="slide level2">
+<h2>설명변수가 여러 개 있는 경우</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a><span class="fu">data</span>(cancer,<span class="at">package=</span><span class="st">"survival"</span>)</span>
+<span id="cb41-2"><a href="#cb41-2"></a>fit<span class="ot">=</span><span class="fu">coxph</span>(<span class="fu">Surv</span>(time,status)<span class="sc">~</span>rx<span class="sc">+</span><span class="fu">strata</span>(sex)<span class="sc">+</span>age<span class="sc">+</span>differ,<span class="at">data =</span>colon)</span>
+<span id="cb41-3"><a href="#cb41-3"></a><span class="fu">adjustedPlot</span>(fit,<span class="at">xnames=</span><span class="fu">c</span>(<span class="st">"sex"</span>,<span class="st">"rx"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="chap4_files/figure-revealjs/unnamed-chunk-32-1.png" style="width:70.0%" class="r-stretch quarto-figure-center"></section>
+<section id="면분할" class="slide level2">
+<h2>면분할</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a><span class="fu">adjustedPlot</span>(fit,<span class="at">xnames=</span><span class="fu">c</span>(<span class="st">"rx"</span>,<span class="st">"sex"</span>,<span class="st">"differ"</span>),<span class="at">facet=</span><span class="fu">c</span>(<span class="st">"sex"</span>,<span class="st">"rx"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="chap4_files/figure-revealjs/unnamed-chunk-33-1.png" style="width:70.0%" class="r-stretch quarto-figure-center"></section>
+<section id="add-95-ci" class="slide level2">
+<h2>add 95% CI</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a><span class="fu">adjustedPlot</span>(fit,<span class="at">xnames=</span><span class="fu">c</span>(<span class="st">"rx"</span>,<span class="st">"sex"</span>,<span class="st">"differ"</span>),<span class="at">facet=</span><span class="fu">c</span>(<span class="st">"sex"</span>,<span class="st">"rx"</span>),<span class="at">se=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="chap4_files/figure-revealjs/unnamed-chunk-34-1.png" style="width:70.0%" class="r-stretch quarto-figure-center"></section>
+<section id="콕스가능도the-cox-likelihood" class="slide level2" data-background="#43464B">
+<h2>콕스가능도(The Cox likelihood)</h2>
+</section>
+<section id="가능도likelihood" class="slide level2">
+<h2>가능도(Likelihood)</h2>
+<ul>
+<li>가능도함수는 결과변수의 분포에 의존한다</li>
+<li>하지만 콕스모형은 결과변수인 실패할 때까지의 시간(time to event)에 대해 가정하지 않는다.</li>
+<li>콕스가능도는 이벤트의 분포가 아닌 이벤트의 관찰된 순서에 의존한다: <strong>부분가능도</strong>라고 불린다.</li>
+</ul>
+</section>
+<section id="예제1" class="slide level2">
+<h2>예제1</h2>
+<ul>
+<li>영희, 철수, 영수 3명이 계를 들었다.</li>
+<li>계를 타는 사람은 일정한 시간 간격(<span class="math inline">\(t_j, j=1,2,...\)</span>)으로 뽑는다</li>
+<li>한번 계를 탄 사람은 탈락되고 다시는 계를 탈 수 없다.</li>
+<li>이때 영희가 먼저 계를 타고 그 후에 철수가 타고 제일 마지막으로 영수가 계를 탈 확률은?</li>
+</ul>
+<div class="fragment">
+<p><span class="math display">\[Probability = \frac{1}{3} \times \frac{1}{2} \times \frac{1}{1}=\frac{1}{6}\]</span></p>
+</div>
+</section>
+<section id="예제2" class="slide level2">
+<h2>예제2</h2>
+<ul>
+<li>사람마다 계를 탈 수 있는 딱지(표)가 있다.</li>
+<li>영희는 4장, 철수는 한 장, 영수는 두 장의 표를 가지고 있다</li>
+<li>표를 모두 모은 후 무작위로 한 장을 선택해서 표의 주인이 계를 타는데 한 번 계를 탄 사람은 다음에는 제외된다</li>
+<li>이 경우 영희, 철수, 영수 순으로 계를 탈 확률은 어떻게 될까?</li>
+</ul>
+<div class="fragment">
+<p><span class="math display">\[Probability = \frac{4}{7} \times \frac{1}{3} \times \frac{1}{1}=\frac{4}{21}\]</span></p>
+</div>
+</section>
+<section id="section-11" class="slide level2">
+<h2></h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">id</th>
+<th style="text-align: right;">time</th>
+<th style="text-align: right;">status</th>
+<th style="text-align: right;">smoke</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">영희</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">철수</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">영수</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">기수</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="section-12" class="slide level2">
+<h2></h2>
+<p>흡연을 설명변수로 하는 콕스비례위험모형을 생각해보자.</p>
+<p><span class="math display">\[h(t)=h_0(t)e^{\beta_1Smoke}\]</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">id</th>
+<th style="text-align: left;">Hazard</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">영희</td>
+<td style="text-align: left;"><span class="math inline">\(h_0(t)exp(\beta_1)\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">철수</td>
+<td style="text-align: left;"><span class="math inline">\(h_0(t)exp(0)\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">영수</td>
+<td style="text-align: left;"><span class="math inline">\(h_0(t)exp(0)\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">기수</td>
+<td style="text-align: left;"><span class="math inline">\(h_0(t)exp(\beta_1)\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="첫번째-콕스가능도-l_1" class="slide level2">
+<h2>첫번째 콕스가능도 <span class="math inline">\(L_1\)</span></h2>
+<ul>
+<li>2년째 영희에게 이벤트가 발생하였다</li>
+<li>이 시기에 네명 모두 이벤트가 발생할 수 있는 위험대상이다.</li>
+<li>첫번째 가능도(<span class="math inline">\(L_1\)</span>)는 네 명의 위험도를 분모에 놓고 영희의 위험도를 분자에 놓으면 된다.</li>
+</ul>
+<p><span class="math display">\[L_1=\frac{h_0(t)e^{\beta_1}}{h_0(t)e^{\beta_1}+h_0(t)e^0+h_0(t)e^0+h_0(t)e^{\beta_1}}\]</span></p>
+</section>
+<section id="두번째-콕스가능도-l_2" class="slide level2">
+<h2>두번째 콕스가능도 <span class="math inline">\(L_2\)</span></h2>
+<ul>
+<li>철수는 3년째 이벤트가 발생하였다.</li>
+<li>이때 위험대상은 철수,영수,기수 3명이다.</li>
+<li>두번째 가능도(<span class="math inline">\(L_2\)</span>)는 세 사람의 위험도의 합을 분모로 하고 철수의 위험도를 분자로 한다.</li>
+</ul>
+<p><span class="math display">\[L_2=\frac{h_0(t)e^0}{h_0(t)e^0+h_0(t)e^0+h_0(t)e^{\beta_1}}\]</span></p>
+</section>
+<section id="세번째-콕스가능도-l_3" class="slide level2">
+<h2>세번째 콕스가능도 <span class="math inline">\(L_3\)</span></h2>
+<ul>
+<li>다음 이벤트는 8년째 발생하였다.</li>
+<li>영수는 5년째 중도절단되었으므로 8년째 위험대상은 기수 혼자이다.</li>
+<li>따라서 <span class="math inline">\(L_3\)</span>은 다음과 같다.</li>
+</ul>
+<p><span class="math display">\[L_3=\frac{h_0(t)e^{\beta_1}}{h_0(t)e^{\beta_1}}\]</span></p>
+</section>
+<section id="콕스가능도" class="slide level2">
+<h2>콕스가능도</h2>
+<p>콕스가능도는 모든 가능도의 곱이며 기저위험함수인 <span class="math inline">\(h_0(t)\)</span>는 분자 분모에 모두 나타나므로 약분되어 생략하고 다음과 같이 나타낼 수 있다.</p>
+<p><span class="math display">\[L=L_1\times L_2\times L_3\]</span> <span class="math display">\[L=[\frac{e^{\beta_1}}{e^{\beta_1}+e^0+e^0+e^{\beta_1}}]\times[\frac{e^0}{e^0+e^0+e^{\beta_1}}]\times[\frac{e^{\beta_1}}{e^{\beta_1}}]\]</span></p>
+</section>
+<section id="콕스가능도의-특성" class="slide level2">
+<h2>콕스가능도의 특성</h2>
+<ul>
+<li>가장 중요한 특성은 기저위험함수가 각 식에서 약분되어 사라짐으로써 콕스모형을 만들 때 기저위험함수를 구체화할 필요가 없다는 점이다.</li>
+<li>콕스가능도는 이벤트의 발생순서와 중도절단의 <strong>발생순서</strong>에 의해 결정되며 <strong>분포</strong>에 의존하지 않는다.</li>
+</ul>
+</section>
+<section id="section-13" class="slide level2">
+<h2></h2>
+<div class="columns">
+<div class="column" style="width:49%;">
+<p>Data A</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">name</th>
+<th style="text-align: right;">t</th>
+<th style="text-align: right;">s</th>
+<th style="text-align: right;">smoke</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">영희</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">철수</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">영수</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">기수</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div><div class="column" style="width:2%;">
+
+</div><div class="column" style="width:49%;">
+<p>Data B</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">name</th>
+<th style="text-align: right;">t</th>
+<th style="text-align: right;">s</th>
+<th style="text-align: right;">smoke</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">영희</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">철수</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">영수</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">기수</td>
+<td style="text-align: right;">63</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<ul>
+<li>데이터 A와 데이터 B에서 시간이 다르지만 이벤트의 발생순서는 같다.</li>
+<li>두 데이터에서 이벤트의 발생순서가 같기 때문에 콕스위험도는 동일하다.</li>
+</ul>
+</section>
+<section id="콕스가능도의-일반화" class="slide level2">
+<h2>콕스가능도의 일반화</h2>
+<p>데이터에 <span class="math inline">\(k\)</span>개의 실패시간이 있을 때 <span class="math inline">\(f\)</span>번째 실패시간의 가능도를 <span class="math inline">\(L_f\)</span>라고 하면 콕스가능도는 k개의 항의 곱으로 나타난다.</p>
+<p><span class="math display">\[L=L_1\times L_2 \times L_3 \times ... \times L_k=\prod_{f=1}^k L_f\]</span></p>
+<p>다음 단계는 콕스가능도 <span class="math inline">\(L\)</span>을 최대화하는 회귀계수의 값을 추정하는 것이다. 추정을 위해 콕스가능도의 자연로그를 편미분한 식을 0으로 만드는 해를 구한다.(스코어 함수와 정보행렬을 이용한다.)</p>
+<p><span class="math display">\[\frac{\partial In L}{\partial \beta_i} =0,\ \ \  i=1,2,3,...,p\ \ (p=number\ of\ parameter)\]</span></p>
+</section>
+<section id="회귀계수의-추정" class="slide level2">
+<h2>회귀계수의 추정</h2>
+<p>위의 예에서 콕스 가능도는 다음과 같았다.</p>
+<p><span class="math display">\[L=[\frac{e^{\beta_1}}{e^{\beta_1}+e^0+e^0+e^{\beta_1}}]\times[\frac{e^0}{e^0+e^0+e^{\beta_1}}]\times[\frac{e^{\beta_1}}{e^{\beta_1}}]\]</span></p>
+<p>이를 정리해보면 다음과 같다. 여기서 설명변수가 하나이므로 <span class="math inline">\(\beta1\)</span>을 <span class="math inline">\(\beta\)</span>로 표기한다.</p>
+<p><span class="math display">\[\begin{align*}
+L(\beta)&amp;=[\frac{e^\beta}{2e^\beta+2}]\times[\frac{1}{e^\beta+2}]\times 1 \\
+&amp;=\frac{e^\beta}{(2e^{\beta}+2)\times (e^{\beta}+2)}
+\end{align*}\]</span></p>
+</section>
+<section id="로그가능도" class="slide level2">
+<h2>로그가능도</h2>
+<p>양변의 로그를 취하면 로그가능도함수를 얻는다.</p>
+<p><span class="math display">\[\begin{align*}
+l(\beta)&amp;=log(\frac{e^\beta}{(2e^{\beta}+2)\times (e^{\beta}+2)}) \\
+&amp;=log(e^\beta)-log(2e^\beta+2)-log(e^\beta+2)
+\end{align*}\]</span></p>
+</section>
+<section id="로그가능도-함수-그래프" class="slide level2">
+<h2>로그가능도 함수 그래프</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a>pl <span class="ot">&lt;-</span> <span class="cf">function</span>(beta) {</span>
+<span id="cb44-2"><a href="#cb44-2"></a>  psi <span class="ot">&lt;-</span> <span class="fu">exp</span>(beta)</span>
+<span id="cb44-3"><a href="#cb44-3"></a>  result <span class="ot">&lt;-</span> <span class="fu">log</span>(psi) <span class="sc">-</span> <span class="fu">log</span>(<span class="dv">2</span><span class="sc">*</span>psi <span class="sc">+</span> <span class="dv">2</span>) <span class="sc">-</span> <span class="fu">log</span>(psi <span class="sc">+</span> <span class="dv">2</span>) </span>
+<span id="cb44-4"><a href="#cb44-4"></a>  result</span>
+<span id="cb44-5"><a href="#cb44-5"></a>}</span>
+<span id="cb44-6"><a href="#cb44-6"></a></span>
+<span id="cb44-7"><a href="#cb44-7"></a>beta<span class="ot">=</span><span class="fu">seq</span>(<span class="sc">-</span><span class="dv">2</span>,<span class="dv">2</span>,<span class="at">length.out=</span><span class="dv">100</span>)</span>
+<span id="cb44-8"><a href="#cb44-8"></a><span class="fu">plot</span>(<span class="fu">pl</span>(beta) <span class="sc">~</span> beta, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">xlab=</span><span class="st">"beta"</span>, <span class="at">ylab=</span><span class="st">"log partial likelihood"</span>,</span>
+<span id="cb44-9"><a href="#cb44-9"></a>     <span class="at">cex.axis=</span><span class="fl">1.5</span>, <span class="at">cex.lab=</span><span class="fl">1.5</span>, <span class="at">lwd=</span><span class="dv">2</span>, <span class="at">col=</span><span class="st">"black"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="chap4_files/figure-revealjs/unnamed-chunk-39-1.png" style="width:70.0%" class="r-stretch quarto-figure-center"></section>
+<section id="회귀계수-추정" class="slide level2">
+<h2>회귀계수 추정</h2>
+<ul>
+<li>로그가능도함수의 값이 최대가 되는 <span class="math inline">\(\beta\)</span>의 값이 회귀계수의 추정치이다.</li>
+<li>최대부분가능도 추정치(maximum partial likelyhood estimate)는 R의 optim함수로 얻을 수 있다.</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1"></a>result<span class="ot">=</span><span class="fu">optim</span>(<span class="at">par=</span><span class="dv">0</span>, <span class="at">fn =</span> pl, <span class="at">method =</span> <span class="st">"L-BFGS-B"</span>,</span>
+<span id="cb45-2"><a href="#cb45-2"></a>                <span class="at">control=</span><span class="fu">list</span>(<span class="at">fnscale =</span> <span class="sc">-</span><span class="dv">1</span>), <span class="at">lower =</span> <span class="sc">-</span><span class="dv">3</span>, <span class="at">upper =</span> <span class="dv">1</span>)</span>
+<span id="cb45-3"><a href="#cb45-3"></a>result<span class="sc">$</span>par</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.3465736</code></pre>
+</div>
+</div>
+</section>
+<section id="스코어-함수" class="slide level2">
+<h2>스코어 함수</h2>
+<ul>
+<li>로그가능도함수를 미분한 함수가 스코어 함수이다.</li>
+<li>스코어함수 값은 로그가능도함수 그래프의 기울기가 된다.</li>
+</ul>
+<p><span class="math display">\[\begin{align*}
+U(\beta)&amp;=l'(\beta)=(log(e^\beta)-log(2e^\beta+2)-log(e^\beta+2))'\\
+&amp;=\frac{e^\beta}{e^\beta}-\frac{2e^\beta}{2e^\beta+2}-\frac{e^\beta}{e^\beta+2}\\
+&amp;=1-\frac{2e^\beta}{2e^\beta+2}-\frac{e^\beta}{e^\beta+2}
+\end{align*}\]</span></p>
+</section>
+<section id="스코어-함수-그래프" class="slide level2">
+<h2>스코어 함수 그래프</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1"></a>scoref<span class="ot">=</span><span class="cf">function</span>(beta){    </span>
+<span id="cb47-2"><a href="#cb47-2"></a>   psi <span class="ot">&lt;-</span> <span class="fu">exp</span>(beta)</span>
+<span id="cb47-3"><a href="#cb47-3"></a>   result<span class="ot">=</span><span class="dv">1-2</span><span class="sc">*</span>psi<span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span>psi<span class="sc">+</span><span class="dv">2</span>)<span class="sc">-</span>psi<span class="sc">/</span>(psi<span class="sc">+</span><span class="dv">2</span>)</span>
+<span id="cb47-4"><a href="#cb47-4"></a>   result</span>
+<span id="cb47-5"><a href="#cb47-5"></a>}</span>
+<span id="cb47-6"><a href="#cb47-6"></a></span>
+<span id="cb47-7"><a href="#cb47-7"></a><span class="fu">plot</span>(<span class="fu">scoref</span>(beta) <span class="sc">~</span> beta, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">xlab=</span><span class="st">"beta"</span>, <span class="at">ylab=</span><span class="st">"score function"</span>,</span>
+<span id="cb47-8"><a href="#cb47-8"></a>     <span class="at">cex.axis=</span><span class="fl">1.5</span>, <span class="at">cex.lab=</span><span class="fl">1.5</span>, <span class="at">lwd=</span><span class="dv">2</span>, <span class="at">col=</span><span class="st">"black"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="chap4_files/figure-revealjs/unnamed-chunk-41-1.png" style="width:70.0%" class="r-stretch quarto-figure-center"></section>
+<section id="스코어-함수---회귀계수" class="slide level2">
+<h2>스코어 함수 -&gt; 회귀계수</h2>
+<p>스코어함수의 값이 0이 되는 <span class="math inline">\(\beta\)</span>의 값과 같다. 이 값은 uniroot함수로 구할 수 있다.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1"></a>result1 <span class="ot">&lt;-</span> <span class="fu">uniroot</span>(<span class="at">f =</span> scoref, <span class="at">interval=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">5</span>,<span class="dv">5</span>),<span class="at">tol =</span> .Machine<span class="sc">$</span>double.eps)</span>
+<span id="cb48-2"><a href="#cb48-2"></a>result1<span class="sc">$</span>root</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.3465736</code></pre>
+</div>
+</div>
+</section>
+<section id="콕스모형에서-회귀계수" class="slide level2">
+<h2>콕스모형에서 회귀계수</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1"></a>fit.cox<span class="ot">=</span><span class="fu">coxph</span>(<span class="fu">Surv</span>(time,status)<span class="sc">~</span>smoke)</span>
+<span id="cb50-2"><a href="#cb50-2"></a>fit.cox<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    smoke 
+0.3465736 </code></pre>
+</div>
+</div>
+</section>
+<section id="스코어함수-값" class="slide level2">
+<h2>스코어함수 값</h2>
+<p>귀무가설인 <span class="math inline">\(\beta=0\)</span>에 해당하는 로그부분가능도 함수의 값은 -2.485이다. 점 (0,-2.485)에서 로그부분가능도 함수의 곡선에 접선을 그리면 그 접선의 기울기는 스코어 함수의 값이 된다.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1"></a><span class="fu">scoref</span>(<span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1666667</code></pre>
+</div>
+</div>
+</section>
+<section id="스코어함수-값-1" class="slide level2">
+<h2>스코어함수 값</h2>
+<ul>
+<li>이 값은 흥미롭게도 로그순위검정의 U 통계량과 같다. 즉, 다음의 로그순위검정에서 관찰값-기대값의 합계와 같다.</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1"></a><span class="fu">library</span>(howto)</span>
+<span id="cb54-2"><a href="#cb54-2"></a>fit<span class="ot">=</span><span class="fu">survfit</span>(<span class="fu">Surv</span>(time,status)<span class="sc">~</span>smoke)</span>
+<span id="cb54-3"><a href="#cb54-3"></a><span class="fu">howto2</span>(fit,<span class="at">digits=</span><span class="dv">3</span>) <span class="sc">%&gt;%</span> <span class="fu">fontsize</span>(<span class="at">size=</span><span class="dv">15</span>,<span class="at">part=</span><span class="st">"all"</span>)<span class="sc">%&gt;%</span> <span class="fu">plot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="chap4_files/figure-revealjs/unnamed-chunk-45-1.png" style="width:70.0%" class="r-stretch quarto-figure-center"></section>
+<section id="로그가능도-함수곡선의-접선" class="slide level2">
+<h2>로그가능도 함수곡선의 접선</h2>
+<p>다음 함수는 로그가능도 함수곡선의 임의의 <span class="math inline">\(\beta\)</span> 값에서 접선을 그려준다.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1"></a>add_tangent<span class="ot">=</span><span class="cf">function</span>(x,<span class="at">col=</span><span class="st">"black"</span>){</span>
+<span id="cb55-2"><a href="#cb55-2"></a>   (<span class="at">y=</span><span class="fu">pl</span>(x))</span>
+<span id="cb55-3"><a href="#cb55-3"></a>   <span class="fu">points</span>(x,y,<span class="at">col=</span>col,<span class="at">pch=</span><span class="dv">19</span>)</span>
+<span id="cb55-4"><a href="#cb55-4"></a>   (<span class="at">slope=</span><span class="fu">scoref</span>(x))</span>
+<span id="cb55-5"><a href="#cb55-5"></a>   intercept<span class="ot">=</span>y<span class="sc">-</span>slope<span class="sc">*</span>x</span>
+<span id="cb55-6"><a href="#cb55-6"></a>   <span class="fu">abline</span>(<span class="at">a=</span>intercept,<span class="at">b=</span>slope,<span class="at">col=</span>col)</span>
+<span id="cb55-7"><a href="#cb55-7"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="section-14" class="slide level2">
+<h2></h2>
+<p>이 함수을 이용해 로그부분가능도함수 곡선 및 최대로그부분가능도, <span class="math inline">\(\beta=0\)</span>일 때의 접선을 그려보면 다음과 같다.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1"></a><span class="fu">plot</span>(<span class="fu">pl</span>(beta) <span class="sc">~</span> beta, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">xlab=</span><span class="st">"beta"</span>, <span class="at">ylab=</span><span class="st">"log partial likelihood"</span>,</span>
+<span id="cb56-2"><a href="#cb56-2"></a>     <span class="at">cex.axis=</span><span class="fl">1.5</span>, <span class="at">cex.lab=</span><span class="fl">1.5</span>, <span class="at">lwd=</span><span class="dv">2</span>, <span class="at">col=</span><span class="st">"black"</span>)</span>
+<span id="cb56-3"><a href="#cb56-3"></a><span class="fu">abline</span>(<span class="at">v=</span>result1<span class="sc">$</span>root, <span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb56-4"><a href="#cb56-4"></a><span class="fu">abline</span>(<span class="at">v=</span><span class="dv">0</span>, <span class="at">lty=</span><span class="dv">2</span>,<span class="at">col=</span><span class="st">"red"</span>)</span>
+<span id="cb56-5"><a href="#cb56-5"></a><span class="fu">add_tangent</span>(<span class="dv">0</span>,<span class="at">col=</span><span class="st">"red"</span>)</span>
+<span id="cb56-6"><a href="#cb56-6"></a><span class="fu">add_tangent</span>(result1<span class="sc">$</span>root)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="chap4_files/figure-revealjs/unnamed-chunk-47-1.png" style="width:70.0%" class="r-stretch quarto-figure-center"></section>
+<section id="여러-개의-공변량이-있을-때-콕스부분가능도" class="slide level2" data-background="#43464B">
+<h2>여러 개의 공변량이 있을 때 콕스부분가능도</h2>
+</section>
+<section id="여러-개의-공변량이-있을-때-콕스부분가능도-1" class="slide level2">
+<h2>여러 개의 공변량이 있을 때 콕스부분가능도</h2>
+<p>식을 간단히 하기 위해 <span class="math inline">\(i\)</span>번째 공변량 <span class="math inline">\(z_i\)</span>의 회귀계수를 <span class="math inline">\(\beta\)</span>라고 헀을 때 <span class="math inline">\(\psi=e^{z_i\beta}\)</span>로 정의한다. 부분가능도는 각 실패시간(1부터 <span class="math inline">\(j\)</span>)의 가능도의 곱으로 계산되며 <span class="math inline">\(j\)</span>번째 실패시간 <span class="math inline">\(t_j\)</span>의 가능도는 위험대상 <span class="math inline">\(R_j\)</span>의 모든 위험을 분모로 하고 위험대상 <span class="math inline">\(R_j\)</span>중 실패를 경험한 대상의 위험이 된다. <span class="math inline">\(D\)</span>는 위험대상 중 사망한 수를 나타낸다.</p>
+<p><span class="math display">\[L(\beta)=\prod_{j=1}^D\frac{h_0(t_j)\psi_j}{\sum_{k \in R_j}h_0(t_j)\psi_k}=\prod_{j=1}^D\frac{\psi_j}{\sum_{k \in R_j}\psi_k}\]</span></p>
+</section>
+<section id="로그콕스부분가능도-스코어함수" class="slide level2">
+<h2>로그콕스부분가능도, 스코어함수</h2>
+<p>위의 콕스부분가능도 함수의 로그를 취하면 로그콕스부분가능도가 된다.</p>
+<p><span class="math display">\[l(\beta)=\sum_{j=1}^D[log(\psi_j)-log(\sum_{k \in R_j}\psi_k)]=\sum_{j=1}^D z_j\beta-\sum_{j=1}^{D} log(\sum_{k \in R_j}e^{z_k\beta})\]</span></p>
+<p>스코어 함수는 로그콕스부분가능도 <span class="math inline">\(l(\beta)\)</span>를 미분한 것으로 공변량의 갯수가 <span class="math inline">\(j\)</span>개인 경우 <span class="math inline">\(j\)</span>개로 구성된다. 스코어함수의 l번째 구성성분은 다음과 같다.</p>
+<p><span class="math display">\[S_l(\beta)=\frac{\partial l(\beta)}{\partial \beta_l}=\sum_{j=1}^{D}[z_{jl}-\frac{\sum_{k \in Rj}z_{jk}e^{z_j\beta}}{\sum_{k \in Rj}e^{z_j\beta}}]\]</span></p>
+<p>위의 식에서 <span class="math inline">\(log(\psi_j)=z_j\beta\)</span>이고 <span class="math inline">\(z_{jl}=\partial log(\psi_j)/\partial\beta_l\)</span>이다.</p>
+</section>
+<section id="정보행렬" class="slide level2">
+<h2>정보행렬</h2>
+<p>k개의 공변량들의 모든 가능한 조합을 갖는 로그부분가능도를 두 번 미분하면 정보행렬(information matrix)을 얻을 수 있다.</p>
+<p><span class="math display">\[I(\beta;z)=-\frac{\partial^2l(\beta)}{\partial \beta \partial \beta'}=-\frac{\partial S(\beta)}{\partial \beta}\]</span></p>
+<p>위의 정보행렬은 헤시안 행렬(Hessian matrix)이라고도 알려져 있다.</p>
+</section>
+<section id="왈드통계량x2_w-스코어통계량x2_s-로그가능도검정통계량x2_l" class="slide level2">
+<h2>왈드통계량(<span class="math inline">\(X^2_w\)</span>), 스코어통계량(<span class="math inline">\(X^2_s\)</span>), 로그가능도검정통계량(<span class="math inline">\(X^2_l\)</span>)</h2>
+<p>귀무가설 <span class="math inline">\(H_0:\beta=0\)</span>에 대한 왈드통계량(<span class="math inline">\(X^2_w\)</span>), 스코어통계량(<span class="math inline">\(X^2_s\)</span>), 로그가능도검정통계량(<span class="math inline">\(X^2_l\)</span>)은 다음과 같다.</p>
+<p><span class="math display">\[X^2_w=\hat{\beta}'I(\hat{\beta};z)\hat{\beta}\]</span> <span class="math display">\[X^2_s=S'(\beta=0;z) \times I^{-1}(\beta=0;z)\times S(\beta;z)\]</span> <span class="math display">\[X^2_l=2\{l(\beta=\hat\beta )-l(\beta=0)\}\]</span></p>
+<p>세 개의 통계량은 모두 공변량의 갯수를 자유도를 갖는 카이제곱분포를 따른다.</p>
+</section>
+<section id="콕스모형-summary" class="slide level2">
+<h2>콕스모형 summary</h2>
+<p>R에서 콕스모형에 적합시킨 후 모형을 summary()로 확인할 경우 세 개의 통계량을 모두 볼 수 있다.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1"></a><span class="fu">library</span>(autoReg)</span>
+<span id="cb57-2"><a href="#cb57-2"></a><span class="fu">summary</span>(<span class="fu">coxph</span>(<span class="fu">Surv</span>(time,status)<span class="sc">~</span>rx<span class="sc">+</span>logWBC,<span class="at">data=</span>anderson))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Call:
+coxph(formula = Surv(time, status) ~ rx + logWBC, data = anderson)
+
+  n= 42, number of events= 30 
+
+         coef exp(coef) se(coef)     z Pr(&gt;|z|)    
+rx     1.3861    3.9991   0.4248 3.263   0.0011 ** 
+logWBC 1.6909    5.4243   0.3359 5.034  4.8e-07 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+       exp(coef) exp(-coef) lower .95 upper .95
+rx         3.999     0.2501     1.739     9.195
+logWBC     5.424     0.1844     2.808    10.478
+
+Concordance= 0.852  (se = 0.04 )
+Likelihood ratio test= 46.71  on 2 df,   p=7e-11
+Wald test            = 33.6  on 2 df,   p=5e-08
+Score (logrank) test = 46.07  on 2 df,   p=1e-10</code></pre>
+</div>
+</div>
 <div class="footer footer-default">
 
 </div>

@@ -5,6 +5,37 @@ editor: visual
 author: 문건웅
 ---
 
+## 소개
+
+문건웅
+
+- 가톨릭대학교 의과대학 교수
+- 성빈센트병원 순환기내과 재직
+
+- CRAN package donor - 13 packages
+  - mycor, moonBook, ztable, ggiraphExta, dplyrAssist, editData, ggplotAssist, webr, rrtable, predict3d, processR, autoReg, interpretCI  
+
+- Web-R.org 운영
+
+## Books
+  - 의학논문 작성을 위한 R통계와 그래프(2015, 한나래)
+     - 2015년 대한민국 학술원 우수학술도서
+  - 웹에서 클릭만으로 하는 R 통계분석(2015, 한나래) 
+  - Learn ggplot2 Using Shiny App(2017, Springer)
+  - R을 이용한 조건부과정분석(2019,학지사)
+  - 의료인을 위한 R 생존분석(2022,한나래)
+
+
+##
+
+![](images/20221105_2.png)
+## 내용
+
+- 생존분석 소개 : chap2.pdf
+- Kaplan-Meier 생존곡선과 로그순위검정 : chap3.pdf
+- 콕스비례위험모형 : chap4.pdf
+
+
 ## 생존분석이란 무엇인가?
 
 ```{r fig.height=1,out.height="15%"}
@@ -68,10 +99,7 @@ ggplot()+
 -   study ends up - no event (사건 발생 없이 연구종료)
 -   lost to follow-up (추적관찰실패)
 -   withdraw (중도탈락)
-:::
-
-::: {.fragment .fade-up}
-사망(사망이 관찰하고자 하는 사건이 아닌 경우)이나 다른 이유(약물 부작용이나 경쟁위험 등)로 탈락한 경우
+     - 사망(사망이 관찰하고자 하는 사건이 아닌 경우)이나 다른 이유(약물 부작용이나 경쟁위험 등)로 탈락한 경우
 :::
 
 ------------------------------------------------------------------------
