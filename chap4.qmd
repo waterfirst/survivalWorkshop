@@ -8,6 +8,8 @@ editor: visual
 knitr::opts_chunk$set(echo = TRUE,comment=NA,out.width="70%",dpi=300,fig.align="center",fig.pos="H")
 ```
 
+## 내용
+
 <script type="text/x-mathjax-config">
 MathJax.Hub.Register.StartupHook("TeX Jax Ready",function () {
   MathJax.Hub.Insert(MathJax.InputJax.TeX.Definitions.macros,{
@@ -18,9 +20,6 @@ MathJax.Hub.Register.StartupHook("TeX Jax Ready",function () {
   });
 });
 </script>
-
-
-## 내용
 
 ::: columns
 ::: {.column width="70%"}
@@ -45,6 +44,8 @@ Sir David Cox
 
 ## 콕스PH모형에 적합시킨 여러 모형의 비교{background="#43464B"}
 
+## 콕스PH모형에 적합시킨 여러 모형의 비교
+
 - anderson 데이터(autoReg 패키지)
 - 백혈병 환자 42명
 - 대조군(rx=1)과 치료군(rx=0)
@@ -54,7 +55,6 @@ Sir David Cox
 ##
 
 ```{r}
-library(autoReg) 
 library(autoReg)
 library(survival)
 library(survminer)
@@ -431,12 +431,8 @@ $$\hat{HR}=\frac{\hat{h}(t,X^*)}{\hat{h}(t,X)}$$
 - 위험비가 1 보다 작은 경우보다 1보다 큰 경우가 해석하기 쉽기 때문에 보통 위험이 큰 대상을 $X^*$(예: 대조군)로 하고 위험이 작은 대상을 $X$로 한다(예: 치료군). 
 
 
-
 ##
-
-$$\hat{HR}=\frac{\hat{h}(t,X^*)}{\hat{h}(t,X)} =\frac{\cancel{\hat{h_0}(t)}\times e^{\sum_{i=1}^p \hat{\beta}X^*_i}}{\cancel{\hat{h_0}(t)}\times e^{\sum_{i=1}^p \hat{\beta}X_i}} = e^{\sum_{i=1}^p \hat{\beta_i}(X^*_i-X_i)}$$
-- 위의 식의 지수부분을 exp을 써서 바꾸면 다음과 같다.
-
+$$\hat{HR}=\frac{\hat{h}(t,X^*)}{\hat{h}(t,X)} =\frac{\hat{h_0}(t)\times e^{\sum_{i=1}^p \hat{\beta}X^*_i}}{\hat{h_0}(t)\times e^{\sum_{i=1}^p \hat{\beta}X_i}} = e^{\sum_{i=1}^p \hat{\beta_i}(X^*_i-X_i)}$$
 $$\hat{HR} =exp(\sum_{i=1}^p \hat{\beta_i}(X^*_i-X_i))$$
 
 . . . 
@@ -444,7 +440,6 @@ $$\hat{HR} =exp(\sum_{i=1}^p \hat{\beta_i}(X^*_i-X_i))$$
 - 따라서 위험비의 계산에서 시간에 따라 변화하는 기저위험함수가 사라지고 설명변수와 회귀계수 부분만 남게 된다. 
 - 즉 위험비는 시간이 변하더라도 변하지 않고 일정하다. 
 - 따라서 콕스는 위험비를  "비례위험"이라고 하였다. 
-
 
 ## 첫번째 모형: 하나의 설명변수
 
@@ -700,7 +695,7 @@ $$L=L_1\times L_2 \times L_3 \times ... \times L_k=\prod_{f=1}^k L_f$$
 
 다음 단계는 콕스가능도 $L$을 최대화하는 회귀계수의 값을 추정하는 것이다. 추정을 위해 콕스가능도의 자연로그를 편미분한 식을 0으로 만드는 해를 구한다.(스코어 함수와 정보행렬을 이용한다.)
 
-$$\frac{\partial In L}{\partial \beta_i} =0,\ \ \  i=1,2,3,...,p\ \ (p=number\ of\ parameter)$$
+$$\frac{\partial In L}{\partial \beta_i} =0,\ \ \  i=1,2,3,...,p\ \ (p=no\ of\ parameters)$$
 
 
 ## 회귀계수의 추정

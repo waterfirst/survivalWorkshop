@@ -392,8 +392,8 @@
   <p class="author">문건웅</p>
 </section>
 
-<section class="slide level2">
-
+<section id="내용" class="slide level2">
+<h2>내용</h2>
 <script type="text/x-mathjax-config">
 MathJax.Hub.Register.StartupHook("TeX Jax Ready",function () {
   MathJax.Hub.Insert(MathJax.InputJax.TeX.Definitions.macros,{
@@ -404,9 +404,6 @@ MathJax.Hub.Register.StartupHook("TeX Jax Ready",function () {
   });
 });
 </script>
-</section>
-<section id="내용" class="slide level2">
-<h2>내용</h2>
 <div class="columns">
 <div class="column" style="width:70%;">
 <ul>
@@ -427,6 +424,9 @@ MathJax.Hub.Register.StartupHook("TeX Jax Ready",function () {
 </section>
 <section id="콕스ph모형에-적합시킨-여러-모형의-비교" class="slide level2" data-background="#43464B">
 <h2>콕스PH모형에 적합시킨 여러 모형의 비교</h2>
+</section>
+<section id="콕스ph모형에-적합시킨-여러-모형의-비교-1" class="slide level2">
+<h2>콕스PH모형에 적합시킨 여러 모형의 비교</h2>
 <ul>
 <li>anderson 데이터(autoReg 패키지)</li>
 <li>백혈병 환자 42명</li>
@@ -438,15 +438,14 @@ MathJax.Hub.Register.StartupHook("TeX Jax Ready",function () {
 <section id="section" class="slide level2">
 <h2></h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(autoReg) </span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(autoReg)</span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">library</span>(survival)</span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">library</span>(survminer)</span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">library</span>(flextable)</span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="fu">library</span>(ftExtra)</span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="fu">library</span>(interpretCI)</span>
-<span id="cb1-8"><a href="#cb1-8"></a></span>
-<span id="cb1-9"><a href="#cb1-9"></a>anderson</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(autoReg)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(survival)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">library</span>(survminer)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">library</span>(flextable)</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">library</span>(ftExtra)</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="fu">library</span>(interpretCI)</span>
+<span id="cb1-7"><a href="#cb1-7"></a></span>
+<span id="cb1-8"><a href="#cb1-8"></a>anderson</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   time status sex logWBC rx
 1    35      0   1   1.45  0
@@ -939,8 +938,7 @@ h(t,\mathbf{X}) &amp;= h_0(t) \times e^{\sum_{i=1}^{p} \beta_iX_i} \\
 </section>
 <section id="section-9" class="slide level2">
 <h2></h2>
-<p><span class="math display">\[\hat{HR}=\frac{\hat{h}(t,X^*)}{\hat{h}(t,X)} =\frac{\cancel{\hat{h_0}(t)}\times e^{\sum_{i=1}^p \hat{\beta}X^*_i}}{\cancel{\hat{h_0}(t)}\times e^{\sum_{i=1}^p \hat{\beta}X_i}} = e^{\sum_{i=1}^p \hat{\beta_i}(X^*_i-X_i)}\]</span> - 위의 식의 지수부분을 exp을 써서 바꾸면 다음과 같다.</p>
-<p><span class="math display">\[\hat{HR} =exp(\sum_{i=1}^p \hat{\beta_i}(X^*_i-X_i))\]</span></p>
+<p><span class="math display">\[\hat{HR}=\frac{\hat{h}(t,X^*)}{\hat{h}(t,X)} =\frac{\hat{h_0}(t)\times e^{\sum_{i=1}^p \hat{\beta}X^*_i}}{\hat{h_0}(t)\times e^{\sum_{i=1}^p \hat{\beta}X_i}} = e^{\sum_{i=1}^p \hat{\beta_i}(X^*_i-X_i)}\]</span> <span class="math display">\[\hat{HR} =exp(\sum_{i=1}^p \hat{\beta_i}(X^*_i-X_i))\]</span></p>
 <div class="fragment">
 <ul>
 <li>따라서 위험비의 계산에서 시간에 따라 변화하는 기저위험함수가 사라지고 설명변수와 회귀계수 부분만 남게 된다.</li>
@@ -1311,7 +1309,7 @@ h(t,\mathbf{X}) &amp;= h_0(t) \times e^{\sum_{i=1}^{p} \beta_iX_i} \\
 <p>데이터에 <span class="math inline">\(k\)</span>개의 실패시간이 있을 때 <span class="math inline">\(f\)</span>번째 실패시간의 가능도를 <span class="math inline">\(L_f\)</span>라고 하면 콕스가능도는 k개의 항의 곱으로 나타난다.</p>
 <p><span class="math display">\[L=L_1\times L_2 \times L_3 \times ... \times L_k=\prod_{f=1}^k L_f\]</span></p>
 <p>다음 단계는 콕스가능도 <span class="math inline">\(L\)</span>을 최대화하는 회귀계수의 값을 추정하는 것이다. 추정을 위해 콕스가능도의 자연로그를 편미분한 식을 0으로 만드는 해를 구한다.(스코어 함수와 정보행렬을 이용한다.)</p>
-<p><span class="math display">\[\frac{\partial In L}{\partial \beta_i} =0,\ \ \  i=1,2,3,...,p\ \ (p=number\ of\ parameter)\]</span></p>
+<p><span class="math display">\[\frac{\partial In L}{\partial \beta_i} =0,\ \ \  i=1,2,3,...,p\ \ (p=no\ of\ parameters)\]</span></p>
 </section>
 <section id="회귀계수의-추정" class="slide level2">
 <h2>회귀계수의 추정</h2>
