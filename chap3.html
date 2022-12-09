@@ -692,17 +692,17 @@ rx=Control   21       21     10.7      9.77      16.8
 <h2></h2>
 <ul>
 <li>2주째에 n.risk는 대조군과 실험군에서 각각 19,21명이며 실패는 대조군에서 2, 치료군에서 0이 관찰되었다.</li>
-<li>실패의 기대값은 대조군은 <span class="math inline">\((n1/(n1+n2))\times(n1+n2)\)</span>이며 치료군은 <span class="math inline">\((n2/(n1+n2))\times(n1+n2)\)</span> 이다.</li>
+<li>실패의 기대값은 대조군은 <span class="math inline">\((n1/(n1+n2))\times(f1+f2)\)</span>이며 치료군은 <span class="math inline">\((n2/(n1+n2))\times(f1+f2)\)</span> 이다.</li>
 <li>관찰값-기댓값의 추정분산은 다음 공식으로 계산한다.</li>
 </ul>
 <p><span class="math display">\[Var(O_i-E_i)=\frac{n1n2(f1+f2)(n1+n2-f1-f2)}{(n1+n2)^2(n1-n2-1)}\]</span></p>
 </section>
 <section id="로그순위-검정량" class="slide level2">
 <h2>로그순위 검정량</h2>
-<p><span class="math display">\[\begin{align*}
+<span class="math display">\[\begin{align*}
 Log-rank\ statistic &amp;= \frac{(O_2-E_2)^2}{Var(O_2-E_2)}\\
 &amp; =\frac{(-10.25)^2}{6.26}\approx16.79\\
-\end{align*}\]</span></p>
+\end{align*}\]</span>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a><span class="fu">attr</span>(ft,<span class="st">"x2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">

@@ -32,9 +32,11 @@ author: 문건웅
 
 ## 내용
 
-- 생존분석 소개 : chap2.pdf
-- Kaplan-Meier 생존곡선과 로그순위검정 : chap3.pdf
-- 콕스비례위험모형 : chap4.pdf
+- https://github.com/cardiomoon/survivalWorkshop
+
+- 생존분석 소개 : chap2.html
+- Kaplan-Meier 생존곡선과 로그순위검정 : chap3.html
+- 콕스비례위험모형 : chap4.html
 
 
 ## 생존분석이란 무엇인가?

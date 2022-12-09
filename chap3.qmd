@@ -230,18 +230,19 @@ ft %>% highlight(i=2,j=c(2:7)) %>% plot()
 ## 
 
 -   2주째에 n.risk는 대조군과 실험군에서 각각 19,21명이며 실패는 대조군에서 2, 치료군에서 0이 관찰되었다.
--   실패의 기대값은 대조군은 $(n1/(n1+n2))\times(n1+n2)$이며 치료군은 $(n2/(n1+n2))\times(n1+n2)$ 이다.
+-   실패의 기대값은 대조군은 $(n1/(n1+n2))\times(f1+f2)$이며 치료군은 $(n2/(n1+n2))\times(f1+f2)$ 이다.
 -   관찰값-기댓값의 추정분산은 다음 공식으로 계산한다.
 
 $$Var(O_i-E_i)=\frac{n1n2(f1+f2)(n1+n2-f1-f2)}{(n1+n2)^2(n1-n2-1)}$$
 
 ## 로그순위 검정량
 
+```{=tex}
 \begin{align*}
 Log-rank\ statistic &= \frac{(O_2-E_2)^2}{Var(O_2-E_2)}\\
 & =\frac{(-10.25)^2}{6.26}\approx16.79\\
 \end{align*}
-
+```
 ```{r,echo=TRUE}
 attr(ft,"x2")
 pchisq(attr(ft,"x2"),df=1,lower.tail=FALSE)
